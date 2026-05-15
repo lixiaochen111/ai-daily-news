@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; font-src 'self' data:;">
+  <title>AI 日报一键部署工具</title>
+
+  <!-- Tailwind CSS 3.4 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- DaisyUI 4.x -->
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-base-200 min-h-screen">
+  <div class="container mx-auto p-4 max-w-4xl">
+    <!-- Header -->
+    <header class="mb-8">
+      <h1 class="text-4xl font-bold text-center text-primary mb-2">AI 日报一键部署工具</h1>
+      <p class="text-center text-base-content/70">一键将您的个性化新闻聚合器部署到 GitHub Pages</p>
+    </header>
+
+    <!-- Step Indicator -->
+    <div class="mb-8">
+      <ul class="steps steps-horizontal w-full">
+        <li class="step step-primary" data-step="1">基本信息</li>
+        <li class="step" data-step="2">GitHub 认证</li>
+        <li class="step" data-step="3">RSS 订阅</li>
+        <li class="step" data-step="4">高级选项</li>
+        <li class="step" data-step="5">部署</li>
+      </ul>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <div id="step-content">
+          <!-- Dynamic content will be loaded here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Navigation -->
+    <div class="flex justify-between mt-6">
+      <button id="btn-back" class="btn btn-outline" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        上一步
+      </button>
+      <button id="btn-next" class="btn btn-primary">
+        下一步
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Step Templates (Hidden) -->
+
+  <!-- Step 1: Basic Info -->
+  <template id="step1-template">
+    <h2 class="card-title text-2xl mb-4">第 1 步：基本信息</h2>
+    <p class="text-base-content/70 mb-6">让我们从一些基本的部署信息开始。</p>
+
+    <div class="form-control w-full mb-4">
+      <label class="label">
+        <span class="label-text">GitHub 用户名</span>
+        <span class="label-text-alt text-error">*必填</span>
+      </label>
+      <input
+        type="text"
+        id="github-username"
+        placeholder="你的用户名"
+        class="input input-bordered w-full"
+        required
+      />
+      <label class="label">
+        <span class="label-text-alt">将在此用户名下创建仓库</span>
+      </label>
+    </div>
+
+    <div class="form-control w-full mb-4">
+      <label class="label">
+        <span class="label-text">邮箱地址</span>
+        <span class="label-text-alt text-error">*必填</span>
+      </label>
+      <input
+        type="email"
+        id="email"
+        placeholder="your@example.com"
+        class="input input-bordered w-full"
+        required
+      />
+      <label class="label">
+        <span class="label-text-alt">用于 Git 提交和通知</span>
+      </label>
+    </div>
+
+    <div class="form-control w-full mb-4">
+      <label class="label">
+        <span class="label-text">仓库名称</span>
+        <span class="label-text-alt text-error">*必填</span>
+      </label>
+      <input
+        type="text"
+        id="repo-name"
+        placeholder="ai-daily-news"
+        class="input input-bordered w-full"
+        required
+        pattern="[a-zA-Z0-9-_]+"
+      />
+      <label class="label">
+        <span class="label-text-alt">只能包含字母、数字、连字符和下划线</span>
+      </label>
+    </div>
+
+    <div class="alert alert-info mt-6">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <span>您的网站将发布在：<strong>https://<span class="username-preview">username</span>.github.io/<span class="repo-preview">repo-name</span></strong></span>
+    </div>
+  </template>
+
+  <!-- Step 2: GitHub Authentication -->
+  <template id="step2-template">
+    <h2 class="card-title text-2xl mb-4">第 2 步：GitHub 认证</h2>
+    <p class="text-base-content/70 mb-6">我们需要一个 GitHub 个人访问令牌来创建和配置您的仓库。</p>
+
+    <div class="alert alert-warning mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <div>
+        <h3 class="font-bold">需要的令牌权限</h3>
+        <p class="text-sm">您的令牌必须具有 <code class="bg-base-200 px-2 py-1 rounded">repo</code> 和 <code class="bg-base-200 px-2 py-1 rounded">workflow</code> 权限。</p>
+      </div>
+    </div>
+
+    <div class="form-control w-full mb-4">
+      <label class="label">
+        <span class="label-text">GitHub 个人访问令牌</span>
+        <span class="label-text-alt text-error">*必填</span>
+      </label>
+      <input
+        type="password"
+        id="github-token"
+        placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        class="input input-bordered w-full font-mono"
+        required
+      />
+      <label class="label">
+        <span class="label-text-alt">经典令牌或具有适当权限的细粒度令牌</span>
+      </label>
+    </div>
+
+    <div class="collapse collapse-arrow bg-base-200 mb-4">
+      <input type="checkbox" />
+      <div class="collapse-title font-medium">
+        如何创建 GitHub 个人访问令牌
+      </div>
+      <div class="collapse-content">
+        <ol class="list-decimal list-inside space-y-2 text-sm">
+          <li>前往 <a href="#" class="link link-primary" id="github-token-link">GitHub 设置 → Developer settings → Personal access tokens</a></li>
+          <li>点击 "Generate new token" (classic)</li>
+          <li>给它一个描述性的名称，如 "AI 日报部署工具"</li>
+          <li>选择以下权限：
+            <ul class="list-disc list-inside ml-6 mt-2">
+              <li><code class="bg-base-300 px-1 rounded">repo</code> - 完全控制私有仓库</li>
+              <li><code class="bg-base-300 px-1 rounded">workflow</code> - 更新 GitHub Action 工作流</li>
+            </ul>
+          </li>
+          <li>点击 "Generate token" 并立即复制（您将无法再次看到它！）</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="form-control mb-4">
+      <label class="label cursor-pointer justify-start gap-4">
+        <input type="checkbox" id="save-token" class="checkbox checkbox-primary" />
+        <span class="label-text">安全保存令牌以供将来使用</span>
+      </label>
+      <label class="label">
+        <span class="label-text-alt">令牌将被加密并本地存储在您的计算机上</span>
+      </label>
+    </div>
+
+    <button id="verify-token" class="btn btn-outline btn-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      验证令牌
+    </button>
+
+    <div id="token-status" class="mt-4 hidden"></div>
+  </template>
+
+  <!-- Step 3: RSS Feeds -->
+  <template id="step3-template">
+    <h2 class="card-title text-2xl mb-4">Step 3: RSS Feed Configuration</h2>
+    <p class="text-base-content/70 mb-6">Add RSS feeds to aggregate news from your favorite sources.</p>
+
+    <div class="form-control w-full mb-4">
+      <label class="label">
+        <span class="label-text">Feed URL</span>
+      </label>
+      <div class="join w-full">
+        <input
+          type="url"
+          id="feed-url"
+          placeholder="https://example.com/feed.xml"
+          class="input input-bordered join-item flex-1"
+        />
+        <button id="add-feed" class="btn btn-primary join-item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Add
+        </button>
+      </div>
+      <label class="label">
+        <span class="label-text-alt">Enter a valid RSS/Atom feed URL</span>
+      </label>
+    </div>
+
+    <div class="divider">Current Feeds</div>
+
+    <div id="feeds-list" class="space-y-2 mb-4">
+      <!-- Feed items will be added here dynamically -->
+      <div class="alert alert-info">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>No feeds added yet. Add at least one RSS feed to continue.</span>
+      </div>
+    </div>
+
+    <div class="collapse collapse-arrow bg-base-200">
+      <input type="checkbox" />
+      <div class="collapse-title font-medium">
+        Suggested AI News Feeds
+      </div>
+      <div class="collapse-content">
+        <ul class="space-y-2">
+          <li class="flex justify-between items-center">
+            <span class="text-sm">TechCrunch AI</span>
+            <button class="btn btn-xs btn-ghost suggested-feed" data-url="https://techcrunch.com/category/artificial-intelligence/feed/">Add</button>
+          </li>
+          <li class="flex justify-between items-center">
+            <span class="text-sm">MIT Technology Review AI</span>
+            <button class="btn btn-xs btn-ghost suggested-feed" data-url="https://www.technologyreview.com/topic/artificial-intelligence/feed">Add</button>
+          </li>
+          <li class="flex justify-between items-center">
+            <span class="text-sm">VentureBeat AI</span>
+            <button class="btn btn-xs btn-ghost suggested-feed" data-url="https://venturebeat.com/category/ai/feed/">Add</button>
+          </li>
+          <li class="flex justify-between items-center">
+            <span class="text-sm">The Verge AI</span>
+            <button class="btn btn-xs btn-ghost suggested-feed" data-url="https://www.theverge.com/rss/ai-artificial-intelligence/index.xml">Add</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </template>
+
+  <!-- Step 4: Advanced Options -->
+  <template id="step4-template">
+    <h2 class="card-title text-2xl mb-4">Step 4: Advanced Configuration</h2>
+    <p class="text-base-content/70 mb-6">Customize update schedule and additional settings.</p>
+
+    <div class="form-control w-full mb-4">
+      <label class="label">
+        <span class="label-text">Update Schedule</span>
+      </label>
+      <select id="update-schedule" class="select select-bordered w-full">
+        <option value="0 */6 * * *">Every 6 hours</option>
+        <option value="0 */12 * * *">Every 12 hours</option>
+        <option value="0 0 * * *" selected>Daily at midnight</option>
+        <option value="0 0 * * 1">Weekly (Monday)</option>
+        <option value="custom">Custom cron expression</option>
+      </select>
+      <label class="label">
+        <span class="label-text-alt">How often GitHub Actions should fetch new articles</span>
+      </label>
+    </div>
+
+    <div id="custom-cron-container" class="form-control w-full mb-4 hidden">
+      <label class="label">
+        <span class="label-text">Custom Cron Expression</span>
+      </label>
+      <input
+        type="text"
+        id="custom-cron"
+        placeholder="0 */6 * * *"
+        class="input input-bordered w-full font-mono"
+      />
+      <label class="label">
+        <span class="label-text-alt">
+          Use <a href="#" class="link link-primary" id="cron-help-link">crontab format</a>
+          (minute hour day month weekday)
+        </span>
+      </label>
+    </div>
+
+    <div class="form-control w-full mb-4">
+      <label class="label">
+        <span class="label-text">Timezone</span>
+      </label>
+      <select id="timezone" class="select select-bordered w-full">
+        <option value="UTC">UTC (Coordinated Universal Time)</option>
+        <option value="America/New_York">Eastern Time (ET)</option>
+        <option value="America/Chicago">Central Time (CT)</option>
+        <option value="America/Denver">Mountain Time (MT)</option>
+        <option value="America/Los_Angeles">Pacific Time (PT)</option>
+        <option value="Europe/London">London (GMT/BST)</option>
+        <option value="Europe/Paris">Paris (CET/CEST)</option>
+        <option value="Asia/Tokyo">Tokyo (JST)</option>
+        <option value="Asia/Shanghai">Shanghai (CST)</option>
+        <option value="Australia/Sydney">Sydney (AEDT/AEST)</option>
+      </select>
+      <label class="label">
+        <span class="label-text-alt">Timezone for scheduled updates</span>
+      </label>
+    </div>
+
+    <div class="form-control w-full mb-4">
+      <label class="label">
+        <span class="label-text">Articles per Page</span>
+      </label>
+      <input
+        type="number"
+        id="articles-per-page"
+        min="5"
+        max="100"
+        value="20"
+        class="input input-bordered w-full"
+      />
+      <label class="label">
+        <span class="label-text-alt">Number of articles to display per page (5-100)</span>
+      </label>
+    </div>
+
+    <div class="form-control mb-4">
+      <label class="label cursor-pointer justify-start gap-4">
+        <input type="checkbox" id="enable-comments" class="checkbox checkbox-primary" />
+        <span class="label-text">Enable GitHub Discussions for comments</span>
+      </label>
+    </div>
+
+    <div class="form-control mb-4">
+      <label class="label cursor-pointer justify-start gap-4">
+        <input type="checkbox" id="enable-analytics" class="checkbox checkbox-primary" />
+        <span class="label-text">Enable basic analytics (privacy-friendly)</span>
+      </label>
+    </div>
+
+    <div class="alert alert-info mt-6">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <span>These settings can be changed later by modifying your repository's configuration files.</span>
+    </div>
+  </template>
+
+  <!-- Step 5: Review & Deploy -->
+  <template id="step5-template">
+    <h2 class="card-title text-2xl mb-4">Step 5: Review & Deploy</h2>
+    <p class="text-base-content/70 mb-6">Review your configuration and start the deployment.</p>
+
+    <!-- Configuration Summary -->
+    <div id="config-summary" class="space-y-4 mb-6">
+      <div class="card bg-base-200">
+        <div class="card-body py-4">
+          <h3 class="font-bold mb-2">Basic Information</h3>
+          <div class="grid grid-cols-2 gap-2 text-sm">
+            <div class="text-base-content/70">GitHub Username:</div>
+            <div class="font-mono" id="summary-username">-</div>
+            <div class="text-base-content/70">Email:</div>
+            <div class="font-mono" id="summary-email">-</div>
+            <div class="text-base-content/70">Repository:</div>
+            <div class="font-mono" id="summary-repo">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-base-200">
+        <div class="card-body py-4">
+          <h3 class="font-bold mb-2">RSS Feeds</h3>
+          <div id="summary-feeds" class="text-sm space-y-1">
+            <!-- Feed list will be inserted here -->
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-base-200">
+        <div class="card-body py-4">
+          <h3 class="font-bold mb-2">Advanced Settings</h3>
+          <div class="grid grid-cols-2 gap-2 text-sm">
+            <div class="text-base-content/70">Update Schedule:</div>
+            <div id="summary-schedule">-</div>
+            <div class="text-base-content/70">Timezone:</div>
+            <div id="summary-timezone">-</div>
+            <div class="text-base-content/70">Articles per Page:</div>
+            <div id="summary-articles">-</div>
+            <div class="text-base-content/70">Comments:</div>
+            <div id="summary-comments">-</div>
+            <div class="text-base-content/70">Analytics:</div>
+            <div id="summary-analytics">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deploy Button -->
+    <div id="deploy-actions" class="flex flex-col gap-4">
+      <button id="btn-deploy" class="btn btn-primary btn-lg w-full">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        </svg>
+        Deploy Now
+      </button>
+
+      <div class="text-center text-sm text-base-content/70">
+        This will create a new repository and set up GitHub Actions
+      </div>
+    </div>
+
+    <!-- Deployment Progress (Hidden by default) -->
+    <div id="deploy-progress" class="hidden space-y-4">
+      <div class="text-center mb-4">
+        <span class="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+
+      <ul class="steps steps-vertical">
+        <li class="step" data-status="pending" id="progress-repo">
+          <div class="text-left">Creating repository...</div>
+        </li>
+        <li class="step" data-status="pending" id="progress-files">
+          <div class="text-left">Uploading files...</div>
+        </li>
+        <li class="step" data-status="pending" id="progress-actions">
+          <div class="text-left">Configuring GitHub Actions...</div>
+        </li>
+        <li class="step" data-status="pending" id="progress-pages">
+          <div class="text-left">Enabling GitHub Pages...</div>
+        </li>
+        <li class="step" data-status="pending" id="progress-complete">
+          <div class="text-left">Finalizing deployment...</div>
+        </li>
+      </ul>
+
+      <div id="progress-log" class="mockup-code bg-neutral text-neutral-content text-xs max-h-60 overflow-y-auto">
+        <pre data-prefix="$"><code>Starting deployment...</code></pre>
+      </div>
+    </div>
+
+    <!-- Success State (Hidden by default) -->
+    <div id="deploy-success" class="hidden">
+      <div class="alert alert-success">
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          <h3 class="font-bold">Deployment Successful!</h3>
+          <div class="text-sm">Your AI Daily News site is now live.</div>
+        </div>
+      </div>
+
+      <div class="card bg-base-200 mt-4">
+        <div class="card-body">
+          <h3 class="font-bold mb-4">Next Steps</h3>
+          <div class="space-y-3">
+            <div>
+              <div class="text-sm text-base-content/70 mb-1">Your site URL:</div>
+              <div class="flex gap-2">
+                <input
+                  type="text"
+                  id="site-url"
+                  readonly
+                  class="input input-bordered input-sm flex-1 font-mono text-xs"
+                  value="https://username.github.io/repo-name"
+                />
+                <button id="copy-url" class="btn btn-sm btn-square">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <div class="text-sm text-base-content/70 mb-1">Repository URL:</div>
+              <div class="flex gap-2">
+                <input
+                  type="text"
+                  id="repo-url"
+                  readonly
+                  class="input input-bordered input-sm flex-1 font-mono text-xs"
+                  value="https://github.com/username/repo-name"
+                />
+                <button id="copy-repo-url" class="btn btn-sm btn-square">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="flex gap-2">
+              <button id="open-site" class="btn btn-primary btn-sm flex-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Open Site
+              </button>
+              <button id="open-repo" class="btn btn-outline btn-sm flex-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Open Repository
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button id="btn-new-deployment" class="btn btn-outline w-full mt-4">
+        Create Another Deployment
+      </button>
+    </div>
+
+    <!-- Error State (Hidden by default) -->
+    <div id="deploy-error" class="hidden">
+      <div class="alert alert-error">
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          <h3 class="font-bold">Deployment Failed</h3>
+          <div class="text-sm" id="error-message">An error occurred during deployment.</div>
+        </div>
+      </div>
+
+      <div class="card bg-base-200 mt-4">
+        <div class="card-body">
+          <h3 class="font-bold mb-2">Error Details</h3>
+          <pre class="text-xs bg-base-300 p-4 rounded overflow-x-auto" id="error-details">-</pre>
+        </div>
+      </div>
+
+      <div class="flex gap-2 mt-4">
+        <button id="btn-retry" class="btn btn-primary flex-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Retry Deployment
+        </button>
+        <button id="btn-back-to-config" class="btn btn-outline flex-1">
+          Back to Configuration
+        </button>
+      </div>
+    </div>
+  </template>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

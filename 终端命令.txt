@@ -1,0 +1,84 @@
+===========================================
+AI日报部署 - 终端命令（复制粘贴执行）
+===========================================
+
+第一步：配置Git用户信息
+--------------------------
+git config user.name "lixiaochen111"
+git config user.email "lixiaochen0529@gmail.com.com"
+
+（记得把邮箱改成你的真实邮箱）
+
+
+第二步：进入项目目录
+--------------------------
+cd /Users/lixiaochen/Desktop/ai-daily-news
+
+
+第三步：删除原remote并添加新的
+--------------------------
+git remote remove origin
+git remote add origin https://github.com/lixiaochen111/ai-daily-news.git
+
+
+第四步：验证remote是否正确
+--------------------------
+git remote -v
+
+（应该显示你的GitHub地址）
+
+
+第五步：添加所有文件
+--------------------------
+git add .
+
+
+第六步：提交
+--------------------------
+git commit -m "feat: 初始化AI+设计日报 - 15个Twitter账号"
+
+
+第七步：重命名分支
+--------------------------
+git branch -M main
+
+
+第八步：推送到GitHub
+--------------------------
+git push -u origin main
+
+（如果要求密码，需要使用Personal Access Token，不是登录密码）
+
+
+===========================================
+推送成功后，继续浏览器操作：
+===========================================
+
+1. 访问：https://github.com/lixiaochen111/ai-daily-news
+2. 点击 Actions → 启用workflows
+3. Settings → Pages → Source选 "GitHub Actions"
+4. Actions → Update AI News Snapshot → Run workflow
+5. 等待完成后访问：https://lixiaochen111.github.io/ai-daily-news/
+
+===========================================
+如果遇到GitHub密码验证问题：
+===========================================
+
+方案A：使用GitHub CLI（推荐）
+-------------------------------
+brew install gh
+gh auth login
+git push -u origin main
+
+
+方案B：创建Personal Access Token
+-------------------------------
+1. 访问：https://github.com/settings/tokens
+2. Generate new token (classic)
+3. Note: ai-daily-news
+4. 勾选 repo 权限
+5. Generate token
+6. 复制token
+7. 推送时用户名：lixiaochen111，密码：粘贴token
+
+===========================================

@@ -1,0 +1,119 @@
+/* Custom styles for AI Daily News Deployer */
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#wizard-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+/* Step indicator enhancements */
+.steps .step-primary:before {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* Feed list item */
+.feed-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--fallback-b1, oklch(var(--b1)));
+  border: 1px solid var(--fallback-bc, oklch(var(--bc) / 0.2));
+  border-radius: 0.5rem;
+}
+
+.feed-item input {
+  flex: 1;
+}
+
+.feed-item button {
+  flex-shrink: 0;
+}
+
+/* Deploy log styling */
+#deploy-log {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#deploy-log .log-info {
+  color: #3b82f6;
+}
+
+#deploy-log .log-success {
+  color: #10b981;
+}
+
+#deploy-log .log-error {
+  color: #ef4444;
+}
+
+#deploy-log .log-warning {
+  color: #f59e0b;
+}
+
+/* Config summary cards */
+.config-card {
+  padding: 1rem;
+  background: var(--fallback-b1, oklch(var(--b1)));
+  border: 1px solid var(--fallback-bc, oklch(var(--bc) / 0.2));
+  border-radius: 0.5rem;
+}
+
+.config-card h3 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.config-card p {
+  font-size: 0.875rem;
+  color: var(--fallback-bc, oklch(var(--bc) / 0.7));
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.step-content {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Scrollbar styling */
+#deploy-log::-webkit-scrollbar {
+  width: 8px;
+}
+
+#deploy-log::-webkit-scrollbar-track {
+  background: var(--fallback-b2, oklch(var(--b2)));
+}
+
+#deploy-log::-webkit-scrollbar-thumb {
+  background: var(--fallback-bc, oklch(var(--bc) / 0.3));
+  border-radius: 4px;
+}
+
+#deploy-log::-webkit-scrollbar-thumb:hover {
+  background: var(--fallback-bc, oklch(var(--bc) / 0.5));
+}

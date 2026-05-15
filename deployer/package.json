@@ -1,0 +1,59 @@
+{
+  "name": "ai-daily-news-deployer",
+  "version": "1.0.0",
+  "description": "One-click deployer for AI Daily News",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build:python": "python3 build_backend.py",
+    "build": "electron-builder --mac",
+    "build:all": "npm run build:python && npm run build"
+  },
+  "keywords": [
+    "electron",
+    "ai-news",
+    "deployer"
+  ],
+  "author": "lixiaochen111",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.0"
+  },
+  "dependencies": {
+    "@octokit/rest": "^22.0.1"
+  },
+  "build": {
+    "appId": "com.ainews.deployer",
+    "productName": "AI Daily News Deployer",
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "icon": "build/icon.icns",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "backend/dist/**/*"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    }
+  }
+}
