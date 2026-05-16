@@ -1,131 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <opml version="2.0">
   <head>
-    <title>AI + Design Daily News - Twitter Feeds</title>
-    <dateCreated>2026-05-13</dateCreated>
+    <title>AI Daily News - RSS Feeds</title>
+    <dateCreated>2026-05-16</dateCreated>
   </head>
   <body>
-    <outline text="AI Leaders &amp; Researchers">
-      <outline
-        text="OpenAI Official"
-        title="OpenAI Official Twitter"
-        type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=OpenAI&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/OpenAI"
-      />
-      <outline
-        text="Andrej Karpathy"
-        title="Andrej Karpathy - AI Researcher"
-        type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=karpathy&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/karpathy"
-      />
-      <outline
-        text="归藏 (GuiZang)"
-        title="AI Tools &amp; News Curator"
-        type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=op7418&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/op7418"
-      />
-    </outline>
-
-    <outline text="AI Product &amp; Design">
-      <outline
-        text="Thariq - Claude Code"
-        title="Thariq from Anthropic"
-        type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=trq212&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/trq212"
-      />
-      <outline
-        text="Tatiana Tsiguleva"
-        title="Creative Ambassador at Perplexity"
-        type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=ciguleva&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/ciguleva"
-      />
-      <outline
-        text="Gavin Nelson"
-        title="Interaction Designer at OpenAI"
-        type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=Gavmn&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/Gavmn"
-      />
-      <outline
-        text="Ryo Lu"
-        title="Design at Cursor.ai"
-        type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=ryolu_&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/ryolu_"
-      />
-    </outline>
-
-    <outline text="Product Designers">
+    <outline text="X/Twitter Feeds (via RSS.app)">
       <outline
         text="Jakub Antalik"
         title="Lead Product Designer"
         type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=Jakubantalik&amp;norep=on&amp;noretweet=on&amp;format=Atom"
+        xmlUrl="https://rss.app/feeds/W7e4bnxUpEIclzYD.xml"
         htmlUrl="https://x.com/Jakubantalik"
       />
       <outline
-        text="Wojciech Zieliński"
-        title="Product Designer at Adobe"
+        text="Praveen Kumar"
+        title="Designer & Branding"
         type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=zielinskiwoj&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/zielinskiwoj"
-      />
-      <outline
-        text="Matt Silva"
-        title="UI Engineer"
-        type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=mattsilx&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/mattsilx"
-      />
-      <outline
-        text="Eduard Bodak"
-        title="Web Designer"
-        type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=eduardbodak&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/eduardbodak"
-      />
-      <outline
-        text="Gustav Ekerot"
-        title="Design Engineer at Rox.ai"
-        type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=designgurra&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/designgurra"
-      />
-      <outline
-        text="Rauno Freiberg"
-        title="Staff Design Engineer at Vercel"
-        type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=raunofreiberg&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/raunofreiberg"
+        xmlUrl="https://rss.app/feeds/y6bvnECMbtrjgHpM.xml"
+        htmlUrl="https://x.com/praveenisomer"
       />
     </outline>
 
-    <outline text="Builders &amp; Creators">
+    <outline text="Official AI Blogs">
       <outline
-        text="Enzo Manuel Mangano"
-        title="Design Engineer at Base"
+        text="Google AI Blog"
+        title="Google AI Blog"
         type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=reactive_&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/reactive_"
+        xmlUrl="https://blog.google/technology/ai/rss/"
+        htmlUrl="https://blog.google/technology/ai/"
       />
       <outline
-        text="Berryxia.AI"
-        title="AI Tools Builder"
+        text="Google DeepMind"
+        title="Google DeepMind Blog"
         type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=berryxia&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/berryxia"
+        xmlUrl="https://deepmind.google/blog/rss.xml"
+        htmlUrl="https://deepmind.google/blog/"
       />
       <outline
-        text="Zara Zhang"
-        title="Builder &amp; Developer"
+        text="OpenAI News"
+        title="OpenAI News"
         type="rss"
-        xmlUrl="https://rss-bridge.org/bridge01/?action=display&amp;bridge=Twitter&amp;context=By+username&amp;u=zarazhangrui&amp;norep=on&amp;noretweet=on&amp;format=Atom"
-        htmlUrl="https://x.com/zarazhangrui"
+        xmlUrl="https://openai.com/news/rss.xml"
+        htmlUrl="https://openai.com/news/"
+      />
+      <outline
+        text="Microsoft AI Blog"
+        title="Microsoft AI Blog"
+        type="rss"
+        xmlUrl="https://blogs.microsoft.com/ai/feed/"
+        htmlUrl="https://blogs.microsoft.com/ai/"
+      />
+      <outline
+        text="Hugging Face Blog"
+        title="Hugging Face Blog"
+        type="rss"
+        xmlUrl="https://huggingface.co/blog/feed.xml"
+        htmlUrl="https://huggingface.co/blog/"
       />
     </outline>
   </body>
