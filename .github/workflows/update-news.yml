@@ -43,6 +43,8 @@ jobs:
           if [ -n "$FOLLOW_OPML_B64" ]; then
             echo "$FOLLOW_OPML_B64" | base64 --decode > feeds/follow.opml
             echo "Loaded feeds/follow.opml from FOLLOW_OPML_B64 secret"
+          elif [ -f feeds/follow.opml ]; then
+            echo "Using feeds/follow.opml from repository"
           elif [ -f feeds/follow.example.opml ]; then
             cp feeds/follow.example.opml feeds/follow.opml
             echo "Loaded public demo OPML from feeds/follow.example.opml"
