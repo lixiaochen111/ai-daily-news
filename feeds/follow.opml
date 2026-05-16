@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>AI + Design Daily News - Twitter Feeds</title>
+    <dateCreated>2026-05-13</dateCreated>
+  </head>
+  <body>
+    <outline text="AI Leaders &amp; Researchers">
+      <outline
+        text="OpenAI Official"
+        title="OpenAI Official Twitter"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/OpenAI"
+        htmlUrl="https://x.com/OpenAI"
+      />
+      <outline
+        text="Andrej Karpathy"
+        title="Andrej Karpathy - AI Researcher"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/karpathy"
+        htmlUrl="https://x.com/karpathy"
+      />
+      <outline
+        text="归藏 (GuiZang)"
+        title="AI Tools &amp; News Curator"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/op7418"
+        htmlUrl="https://x.com/op7418"
+      />
+    </outline>
+
+    <outline text="AI Product &amp; Design">
+      <outline
+        text="Thariq - Claude Code"
+        title="Thariq from Anthropic"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/trq212"
+        htmlUrl="https://x.com/trq212"
+      />
+      <outline
+        text="Tatiana Tsiguleva"
+        title="Creative Ambassador at Perplexity"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/ciguleva"
+        htmlUrl="https://x.com/ciguleva"
+      />
+      <outline
+        text="Gavin Nelson"
+        title="Interaction Designer at OpenAI"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/Gavmn"
+        htmlUrl="https://x.com/Gavmn"
+      />
+      <outline
+        text="Ryo Lu"
+        title="Design at Cursor.ai"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/ryolu_"
+        htmlUrl="https://x.com/ryolu_"
+      />
+    </outline>
+
+    <outline text="Product Designers">
+      <outline
+        text="Jakub Antalik"
+        title="Lead Product Designer"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/Jakubantalik"
+        htmlUrl="https://x.com/Jakubantalik"
+      />
+      <outline
+        text="Wojciech Zieliński"
+        title="Product Designer at Adobe"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/zielinskiwoj"
+        htmlUrl="https://x.com/zielinskiwoj"
+      />
+      <outline
+        text="Matt Silva"
+        title="UI Engineer"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/mattsilx"
+        htmlUrl="https://x.com/mattsilx"
+      />
+      <outline
+        text="Eduard Bodak"
+        title="Web Designer"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/eduardbodak"
+        htmlUrl="https://x.com/eduardbodak"
+      />
+      <outline
+        text="Gustav Ekerot"
+        title="Design Engineer at Rox.ai"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/designgurra"
+        htmlUrl="https://x.com/designgurra"
+      />
+      <outline
+        text="Rauno Freiberg"
+        title="Staff Design Engineer at Vercel"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/raunofreiberg"
+        htmlUrl="https://x.com/raunofreiberg"
+      />
+    </outline>
+
+    <outline text="Builders &amp; Creators">
+      <outline
+        text="Enzo Manuel Mangano"
+        title="Design Engineer at Base"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/reactive_"
+        htmlUrl="https://x.com/reactive_"
+      />
+      <outline
+        text="Berryxia.AI"
+        title="AI Tools Builder"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/berryxia"
+        htmlUrl="https://x.com/berryxia"
+      />
+      <outline
+        text="Zara Zhang"
+        title="Builder &amp; Developer"
+        type="rss"
+        xmlUrl="https://rsshub.pseudoyu.com/twitter/user/zarazhangrui"
+        htmlUrl="https://x.com/zarazhangrui"
+      />
+    </outline>
+  </body>
+</opml>

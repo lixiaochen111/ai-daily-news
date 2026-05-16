@@ -19,7 +19,7 @@ __pycache__/
 venv/
 
 # Private source inputs
-feeds/follow.opml
+# feeds/follow.opml  # Now public - contains X/Twitter bloggers list
 feeds/*.private.opml
 feeds/private*.opml
 
