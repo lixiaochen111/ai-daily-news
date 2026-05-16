@@ -576,6 +576,100 @@ function renderSourceHealth(errorMessage = "") {
     ok.textContent = "源状态正常";
     sourceHealthEl.appendChild(ok);
   }
+
+  // 添加RSS订阅源详细状态
+  if (rss.enabled && Array.isArray(rss.feeds) && rss.feeds.length > 0) {
+    const rssSection = document.createElement("details");
+    rssSection.className = "health-details";
+    rssSection.open = failedFeeds.length > 0; // 如果有失败的就默认展开
+
+    const rssSummary = document.createElement("summary");
+    rssSummary.textContent = `RSS 订阅源详情 (${rss.ok_feeds || 0}/${rss.feeds.length})`;
+    rssSection.appendChild(rssSummary);
+
+    const rssTable = document.createElement("div");
+    rssTable.className = "source-table";
+
+    rss.feeds.forEach((feed) => {
+      const row = document.createElement("div");
+      row.className = `source-row ${feed.ok ? 'source-ok' : 'source-fail'}`;
+
+      const statusIcon = document.createElement("span");
+      statusIcon.className = "source-status";
+      statusIcon.textContent = feed.ok ? '✓' : '✗';
+
+      const info = document.createElement("div");
+      info.className = "source-info";
+
+      const title = document.createElement("div");
+      title.className = "source-title";
+      title.textContent = feed.feed_title || feed.feed_url;
+
+      const meta = document.createElement("div");
+      meta.className = "source-meta";
+      if (feed.ok) {
+        meta.textContent = `${feed.item_count} 条 · ${feed.duration_ms}ms`;
+      } else {
+        meta.textContent = feed.error || '抓取失败';
+      }
+
+      info.appendChild(title);
+      info.appendChild(meta);
+      row.appendChild(statusIcon);
+      row.appendChild(info);
+      rssTable.appendChild(row);
+    });
+
+    rssSection.appendChild(rssTable);
+    sourceHealthEl.appendChild(rssSection);
+  }
+
+  // 添加内置源详细状态
+  if (sites.length > 0) {
+    const sitesSection = document.createElement("details");
+    sitesSection.className = "health-details";
+
+    const sitesSummary = document.createElement("summary");
+    sitesSummary.textContent = `内置数据源详情 (${status.successful_sites || 0}/${sites.length})`;
+    sitesSection.appendChild(sitesSummary);
+
+    const sitesTable = document.createElement("div");
+    sitesTable.className = "source-table";
+
+    sites.forEach((site) => {
+      const row = document.createElement("div");
+      row.className = `source-row ${site.ok ? 'source-ok' : 'source-fail'}`;
+
+      const statusIcon = document.createElement("span");
+      statusIcon.className = "source-status";
+      statusIcon.textContent = site.ok ? '✓' : '✗';
+
+      const info = document.createElement("div");
+      info.className = "source-info";
+
+      const title = document.createElement("div");
+      title.className = "source-title";
+      title.textContent = site.site_name || site.site_id;
+
+      const meta = document.createElement("div");
+      meta.className = "source-meta";
+      if (site.ok) {
+        meta.textContent = `${site.item_count} 条 · ${site.duration_ms}ms`;
+      } else {
+        meta.textContent = site.error || '抓取失败';
+      }
+
+      info.appendChild(title);
+      info.appendChild(meta);
+      row.appendChild(statusIcon);
+      row.appendChild(info);
+      sitesTable.appendChild(row);
+    });
+
+    sitesSection.appendChild(sitesTable);
+    sourceHealthEl.appendChild(sitesSection);
+  }
+
   renderAdvancedSummary();
 }
 
