@@ -79,3 +79,14 @@ class TestEasyRouterClient:
                     )
 
                 assert 'API Error' in str(exc_info.value)
+
+    def test_missing_api_key_raises_error(self, monkeypatch):
+        """Client should raise error when API key is missing."""
+        # Clear all environment variables
+        monkeypatch.delenv("EASYROUTER_API_KEY", raising=False)
+        monkeypatch.delenv("EASYROUTER_BASE_URL", raising=False)
+
+        with pytest.raises(ValueError) as exc_info:
+            EasyRouterClient()
+
+        assert "EASYROUTER_API_KEY" in str(exc_info.value)
