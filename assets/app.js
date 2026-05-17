@@ -940,3 +940,201 @@ if (waytoagi7dBtnEl) {
 }
 
 init();
+
+// ============================================
+// AI Filter Configuration Management
+// ============================================
+
+const AIFilterConfig = {
+  storageKey: 'ai_filter_config',
+  
+  // 加载配置
+  load() {
+    const stored = localStorage.getItem(this.storageKey);
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        console.error('Failed to parse AI filter config:', e);
+      }
+    }
+    return {
+      apiKey: '',
+      enabled: false,
+      baseUrl: 'https://api.easyrouter.ai/v1'
+    };
+  },
+  
+  // 保存配置
+  save(config) {
+    localStorage.setItem(this.storageKey, JSON.stringify(config));
+  },
+  
+  // 清除配置
+  clear() {
+    localStorage.removeItem(this.storageKey);
+  },
+  
+  // 更新UI状态
+  updateUI(config) {
+    const statusBadge = document.getElementById('filterStatusBadge');
+    const statusText = document.getElementById('filterStatusText');
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const enableToggle = document.getElementById('enableFilterToggle');
+    
+    if (!statusBadge || !statusText) return;
+    
+    if (config.enabled && config.apiKey) {
+      statusBadge.textContent = '已启用';
+      statusBadge.className = 'status-badge active';
+      statusText.textContent = 'AI智能筛选已启用（三级白名单系统）';
+    } else if (config.apiKey) {
+      statusBadge.textContent = '已配置';
+      statusBadge.className = 'status-badge inactive';
+      statusText.textContent = 'API密钥已配置，但AI筛选未启用';
+    } else {
+      statusBadge.textContent = '未配置';
+      statusBadge.className = 'status-badge';
+      statusText.textContent = 'AI智能筛选未启用';
+    }
+    
+    if (apiKeyInput) {
+      apiKeyInput.value = config.apiKey || '';
+    }
+    if (enableToggle) {
+      enableToggle.checked = config.enabled || false;
+    }
+  },
+  
+  // 显示消息
+  showMessage(message, type = 'info') {
+    const msgEl = document.getElementById('configMessage');
+    if (!msgEl) return;
+    
+    msgEl.textContent = message;
+    msgEl.className = `config-message ${type}`;
+    msgEl.style.display = 'block';
+    
+    setTimeout(() => {
+      msgEl.style.display = 'none';
+    }, 5000);
+  },
+  
+  // 测试API连接
+  async testConnection(apiKey) {
+    if (!apiKey) {
+      this.showMessage('请先输入API密钥', 'error');
+      return false;
+    }
+    
+    this.showMessage('正在测试连接...', 'info');
+    
+    try {
+      const response = await fetch('https://api.easyrouter.ai/v1/models', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      });
+      
+      if (response.ok) {
+        this.showMessage('✅ 连接成功！API密钥有效', 'success');
+        return true;
+      } else {
+        this.showMessage(`❌ 连接失败：${response.status} ${response.statusText}`, 'error');
+        return false;
+      }
+    } catch (error) {
+      this.showMessage(`❌ 连接失败：${error.message}`, 'error');
+      return false;
+    }
+  },
+  
+  // 初始化
+  init() {
+    const config = this.load();
+    this.updateUI(config);
+    
+    // 密钥可见性切换
+    const toggleBtn = document.getElementById('toggleApiKeyBtn');
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    
+    if (toggleBtn && apiKeyInput) {
+      toggleBtn.addEventListener('click', () => {
+        if (apiKeyInput.type === 'password') {
+          apiKeyInput.type = 'text';
+          toggleBtn.textContent = '🙈';
+        } else {
+          apiKeyInput.type = 'password';
+          toggleBtn.textContent = '👁️';
+        }
+      });
+    }
+    
+    // 保存配置
+    const saveBtn = document.getElementById('saveConfigBtn');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => {
+        const apiKey = apiKeyInput?.value.trim() || '';
+        const enabled = document.getElementById('enableFilterToggle')?.checked || false;
+        
+        if (enabled && !apiKey) {
+          this.showMessage('启用AI筛选需要先配置API密钥', 'error');
+          return;
+        }
+        
+        const newConfig = {
+          apiKey,
+          enabled,
+          baseUrl: 'https://api.easyrouter.ai/v1'
+        };
+        
+        this.save(newConfig);
+        this.updateUI(newConfig);
+        this.showMessage('✅ 配置已保存！刷新页面后生效', 'success');
+        
+        // 提示用户需要后端配置
+        if (apiKey && enabled) {
+          setTimeout(() => {
+            this.showMessage(
+              '⚠️ 注意：前端配置仅用于显示。要真正启用AI筛选，需要在服务器端配置.env文件',
+              'info'
+            );
+          }, 3000);
+        }
+      });
+    }
+    
+    // 测试连接
+    const testBtn = document.getElementById('testConfigBtn');
+    if (testBtn) {
+      testBtn.addEventListener('click', () => {
+        const apiKey = apiKeyInput?.value.trim() || '';
+        this.testConnection(apiKey);
+      });
+    }
+    
+    // 清除配置
+    const clearBtn = document.getElementById('clearConfigBtn');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        if (confirm('确定要清除所有AI筛选配置吗？')) {
+          this.clear();
+          this.updateUI({ apiKey: '', enabled: false });
+          this.showMessage('配置已清除', 'info');
+        }
+      });
+    }
+  }
+};
+
+// 在页面加载时初始化配置管理
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    AIFilterConfig.init();
+  });
+} else {
+  AIFilterConfig.init();
+}

@@ -82,6 +82,48 @@
               <span id="allDedupeLabel">去重开</span>
             </label>
           </div>
+
+          <!-- AI Filter Configuration -->
+          <details class="ai-filter-config">
+            <summary>🤖 AI筛选配置</summary>
+            <div class="config-content">
+              <div class="config-status" id="aiFilterStatus">
+                <span class="status-badge" id="filterStatusBadge">未配置</span>
+                <span id="filterStatusText">AI智能筛选未启用</span>
+              </div>
+
+              <label class="config-field">
+                <span class="config-label">EasyRouter API密钥</span>
+                <div class="config-input-group">
+                  <input
+                    type="password"
+                    id="apiKeyInput"
+                    class="config-input"
+                    placeholder="请输入EasyRouter API密钥"
+                    autocomplete="off"
+                  />
+                  <button type="button" id="toggleApiKeyBtn" class="toggle-visibility-btn">👁️</button>
+                </div>
+                <small class="config-hint">
+                  <a href="https://easyrouter.ai/" target="_blank">获取API密钥</a>
+                  | 存储在浏览器本地，不会上传
+                </small>
+              </label>
+
+              <label class="config-field">
+                <input type="checkbox" id="enableFilterToggle" />
+                <span>启用AI智能筛选（三级白名单系统）</span>
+              </label>
+
+              <div class="config-actions">
+                <button type="button" id="saveConfigBtn" class="btn-primary">保存配置</button>
+                <button type="button" id="testConfigBtn" class="btn-secondary">测试连接</button>
+                <button type="button" id="clearConfigBtn" class="btn-danger">清除配置</button>
+              </div>
+
+              <div id="configMessage" class="config-message" style="display: none;"></div>
+            </div>
+          </details>
           <div class="source-health" id="sourceHealth">源状态加载中...</div>
           <section class="site-pills" id="sitePills"></section>
         </div>

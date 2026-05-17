@@ -991,3 +991,194 @@ summary:focus-visible {
     font-size: 13px;
   }
 }
+
+/* AI Filter Configuration Styles */
+.ai-filter-config {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.ai-filter-config summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--accent);
+  padding: 8px 0;
+  user-select: none;
+}
+
+.ai-filter-config summary:hover {
+  color: var(--accent-warm);
+}
+
+.config-content {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.config-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--muted);
+  color: white;
+}
+
+.status-badge.active {
+  background: var(--good);
+}
+
+.status-badge.inactive {
+  background: var(--warn);
+}
+
+.config-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.config-label {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.config-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.config-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+.config-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(18, 106, 115, 0.1);
+}
+
+.toggle-visibility-btn {
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-visibility-btn:hover {
+  background: var(--surface-soft);
+  border-color: var(--accent);
+}
+
+.config-hint {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.config-hint a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.config-hint a:hover {
+  text-decoration: underline;
+}
+
+.config-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  border: none;
+  font-weight: 600;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #0e5861;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.btn-secondary:hover {
+  background: var(--surface-soft);
+  border-color: var(--accent);
+}
+
+.btn-danger {
+  background: var(--bad);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #9a1d12;
+}
+
+.config-message {
+  padding: 12px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.config-message.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.config-message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.config-message.info {
+  background: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
