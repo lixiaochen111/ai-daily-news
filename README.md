@@ -54,6 +54,7 @@ AI News Radar从来都不是单纯把信息抓回来，
 - 同时接入多个公开聚合源，例如 AI HOT，补足普通官方源看不到的盲区
 - 支持OPML/RSS批量导入
 - 支持AgentMail邮箱订阅高质量AI日报
+- 三级AI内容过滤系统，智能筛选高质量内容
 - 输出24小时双视图，`AI强相关` 和 `全量`
 - 中英双语标题和站点分组
 - 兼容飞书文档，追加了WaytoAGI开源社区最近更新日和近7日变化
@@ -89,6 +90,65 @@ flowchart LR
 AI News Radar学习了现代新闻学的技术，不是简单堆信息源，一次性放几万条信息出来等于没用，所以我选择把新闻处理拆成稳定pipeline，抓取，去重，过滤，补充状态，生成静态站点。
 
 在保证稳定性的同时追求轻量化，公开版不要求用户配置LLM API Key，不依赖登录态，cookies，X API和邮箱。需要这些进阶能力时，可以通过伯乐Skill用GitHub Secrets或本地环境变量接入。
+
+## AI 内容过滤
+
+AI News Radar 使用三级白名单系统，根据信源特征自动选择最优过滤策略：
+
+### 三级过滤体系
+
+- **Tier 0 - 编辑精选源**：UX Collective、Awwwards、Sidebar 等专业编辑筛选的高质量源，直接发布
+- **Tier 1 - 高质量源**：优设网、UX Collective Weekly 等内容优质但范围广的源，使用 AI 深度分析判断相关性
+- **Tier 2 - 广域官方源**：Figma、OpenAI、少数派等官方源，通过关键词预筛选 + AI 分析完整管道
+
+### 智能语言路由
+
+系统根据内容语言自动选择最优 AI 模型：
+
+- **中文内容** → DeepSeek-Chat（原生中文理解，成本优化）
+- **英文内容** → GPT-4o-mini（强推理能力，输出稳定）
+
+### Quick Start
+
+```bash
+# 1. 设置 API Key
+echo "OPENAI_API_KEY=sk-..." >> .env
+echo "DEEPSEEK_API_KEY=sk-..." >> .env  # 可选，中文内容优化
+
+# 2. 运行更新（AI 过滤自动启用）
+python scripts/update_news.py --output-dir data --window-hours 24
+
+# 3. 查看过滤统计
+cat data/source-status.json | jq '.filter_stats'
+```
+
+### 配置自定义源
+
+编辑 `config/source-whitelist.yaml` 添加新源：
+
+```yaml
+tier_1_sources:
+  - id: my_design_blog
+    name: "My Design Blog"
+    patterns:
+      - "mydesignblog.com"
+    reason: "高质量设计内容，AI 判断相关性"
+    language: "en"
+    ai_filter_focus:
+      - "AI design tools"
+      - "Design automation"
+    max_items_per_day: 3
+```
+
+### 前端个性化
+
+用户可以通过网页界面反馈内容偏好，系统会：
+- 提升喜欢类别的内容权重
+- 隐藏不感兴趣的信源
+- 调整不同层级内容的显示比例
+- 所有数据本地存储，保护隐私
+
+详细文档：[docs/AI_FILTER_GUIDE.md](docs/AI_FILTER_GUIDE.md)
 
 ## 快速开始
 
