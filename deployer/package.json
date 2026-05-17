@@ -22,7 +22,8 @@
     "electron-builder": "^24.13.0"
   },
   "dependencies": {
-    "@octokit/rest": "^22.0.1"
+    "@octokit/rest": "^22.0.1",
+    "libsodium-wrappers": "^0.7.13"
   },
   "build": {
     "appId": "com.ainews.deployer",

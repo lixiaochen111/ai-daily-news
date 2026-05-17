@@ -120,6 +120,11 @@ function setupIpcHandlers() {
       // Step 3: Configure GitHub Actions
       sendProgress('progress-actions', '正在配置 GitHub Actions...', 'in-progress');
       await configureGitHubActions(octokit, config, repo);
+
+      // Configure secrets if API key provided
+      if (config.secrets && config.secrets.easyrouterApiKey) {
+        await configureGitHubSecrets(octokit, config, repo);
+      }
       sendProgress('progress-actions', 'GitHub Actions 配置成功 ✓', 'complete');
 
       // Step 4: Enable GitHub Pages
@@ -241,7 +246,20 @@ async function uploadProjectFiles(octokit, config, repo) {
     { path: 'scripts/update_news.py', source: 'scripts/update_news.py', required: true },
     { path: 'scripts/ai_relevance.py', source: 'scripts/ai_relevance.py', required: true },
 
+    // AI Filter modules
+    { path: 'scripts/ai_filter/__init__.py', source: 'scripts/ai_filter/__init__.py', required: true },
+    { path: 'scripts/ai_filter/main_filter.py', source: 'scripts/ai_filter/main_filter.py', required: true },
+    { path: 'scripts/ai_filter/whitelist_router.py', source: 'scripts/ai_filter/whitelist_router.py', required: true },
+    { path: 'scripts/ai_filter/tier0_processor.py', source: 'scripts/ai_filter/tier0_processor.py', required: true },
+    { path: 'scripts/ai_filter/tier1_filter.py', source: 'scripts/ai_filter/tier1_filter.py', required: true },
+    { path: 'scripts/ai_filter/tier2_pipeline.py', source: 'scripts/ai_filter/tier2_pipeline.py', required: true },
+    { path: 'scripts/ai_filter/easyrouter_client.py', source: 'scripts/ai_filter/easyrouter_client.py', required: true },
+    { path: 'scripts/ai_filter/language_detector.py', source: 'scripts/ai_filter/language_detector.py', required: true },
+    { path: 'scripts/ai_filter/prompts.py', source: 'scripts/ai_filter/prompts.py', required: true },
+
     // Config files
+    { path: 'config/source-whitelist.yaml', source: 'config/source-whitelist.yaml', required: true },
+    { path: 'config/source-tier-allocation.md', source: 'config/source-tier-allocation.md', required: false },
     { path: 'feeds/follow.opml', content: generateOpml(config) },
     { path: 'requirements.txt', source: 'requirements.txt', required: false },
 
@@ -367,6 +385,11 @@ async function configureGitHubActions(octokit, config, repo) {
 }
 
 function generateWorkflowYaml(config) {
+  const hasApiKey = config.secrets && config.secrets.easyrouterApiKey;
+  const envSection = hasApiKey ? `
+        env:
+          EASYROUTER_API_KEY: \${{ secrets.EASYROUTER_API_KEY }}` : '';
+
   return `name: Update News
 
 on:
@@ -376,6 +399,9 @@ on:
   push:
     branches:
       - main
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
   contents: write
@@ -397,9 +423,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install feedparser requests beautifulsoup4 python-dateutil
+          pip install feedparser requests beautifulsoup4 python-dateutil pyyaml
 
-      - name: Update news data
+      - name: Update news data${envSection}
         run: |
           python scripts/update_news.py --output-dir data --window-hours 24 --rss-opml feeds/follow.opml
 
@@ -451,4 +477,41 @@ async function enableGitHubPages(octokit, config, repo) {
   }
 
   await new Promise(resolve => setTimeout(resolve, 1000));
+}
+
+async function configureGitHubSecrets(octokit, config, repo) {
+  if (!config.secrets || !config.secrets.easyrouterApiKey) {
+    return;
+  }
+
+  try {
+    // Get repository public key for encrypting secrets
+    const { data: publicKey } = await octokit.rest.actions.getRepoPublicKey({
+      owner: config.github.username,
+      repo: config.github.repoName
+    });
+
+    // Encrypt the secret using libsodium
+    const sodium = require('libsodium-wrappers');
+    await sodium.ready;
+
+    const secretBytes = Buffer.from(config.secrets.easyrouterApiKey);
+    const keyBytes = Buffer.from(publicKey.key, 'base64');
+    const encryptedBytes = sodium.crypto_box_seal(secretBytes, keyBytes);
+    const encryptedValue = Buffer.from(encryptedBytes).toString('base64');
+
+    // Create or update the secret
+    await octokit.rest.actions.createOrUpdateRepoSecret({
+      owner: config.github.username,
+      repo: config.github.repoName,
+      secret_name: 'EASYROUTER_API_KEY',
+      encrypted_value: encryptedValue,
+      key_id: publicKey.key_id
+    });
+
+    console.log('GitHub Secret configured: EASYROUTER_API_KEY');
+  } catch (error) {
+    console.error('Failed to configure GitHub Secrets:', error);
+    // Don't throw - secrets are optional
+  }
 }
