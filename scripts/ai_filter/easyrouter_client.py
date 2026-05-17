@@ -5,7 +5,7 @@ to access models like GLM-4-Flash, DeepSeek-V4 Pro, and GPT-4o Mini.
 """
 
 import os
-from typing import Dict
+from typing import Any, Dict
 
 import requests
 
@@ -35,7 +35,7 @@ class EasyRouterClient:
         user_prompt: str,
         temperature: float = 0.7,
         max_tokens: int = 500
-    ) -> Dict[str, any]:
+    ) -> Dict[str, Any]:
         """Call a model via EasyRouter API.
 
         Args:
