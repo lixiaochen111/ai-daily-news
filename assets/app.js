@@ -17,6 +17,8 @@ const state = {
   waytoagiData: null,
   sourceStatus: null,
   generatedAt: null,
+  personalizationEnabled: true,
+  personalizationEngine: null,
 };
 
 const statsEl = document.getElementById("stats");
@@ -270,12 +272,33 @@ function modeItems() {
 
 function getFilteredItems() {
   const q = state.query.trim().toLowerCase();
-  return modeItems().filter((item) => {
+  let filtered = modeItems().filter((item) => {
     if (state.siteFilter && item.site_id !== state.siteFilter) return false;
     if (!q) return true;
     const hay = `${item.title || ""} ${item.title_zh || ""} ${item.title_en || ""} ${item.site_name || ""} ${item.source || ""}`.toLowerCase();
     return hay.includes(q);
   });
+
+  // 应用个性化排序
+  if (state.personalizationEnabled && state.personalizationEngine) {
+    filtered = filtered.map(item => {
+      const tone = sourceKind(item.site_id).tone;
+      const personalizedScore = state.personalizationEngine.calculatePersonalizedScore(item, tone);
+      return { ...item, _personalizedScore: personalizedScore };
+    });
+
+    // 按个性化评分排序（降序）
+    filtered.sort((a, b) => {
+      const scoreDiff = (b._personalizedScore || 0) - (a._personalizedScore || 0);
+      if (Math.abs(scoreDiff) > 0.01) return scoreDiff;
+      // 如果评分相近，按时间排序
+      const timeA = new Date(a.published_at || a.first_seen_at || 0).getTime();
+      const timeB = new Date(b.published_at || b.first_seen_at || 0).getTime();
+      return timeB - timeA;
+    });
+  }
+
+  return filtered;
 }
 
 function renderItemNode(item) {
@@ -304,7 +327,72 @@ function renderItemNode(item) {
     titleEl.textContent = item.title || zh || en;
   }
   titleEl.href = item.url;
+
+  // 添加个性化反馈按钮
+  if (state.personalizationEnabled && state.personalizationEngine) {
+    const feedbackEl = document.createElement("div");
+    feedbackEl.className = "feedback-buttons";
+
+    const interestedBtn = document.createElement("button");
+    interestedBtn.className = "feedback-btn feedback-interested";
+    interestedBtn.title = "感兴趣";
+    interestedBtn.innerHTML = "👍";
+    interestedBtn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      handleFeedback(item, kind.tone, true, interestedBtn);
+    };
+
+    const notInterestedBtn = document.createElement("button");
+    notInterestedBtn.className = "feedback-btn feedback-not-interested";
+    notInterestedBtn.title = "不感兴趣";
+    notInterestedBtn.innerHTML = "👎";
+    notInterestedBtn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      handleFeedback(item, kind.tone, false, notInterestedBtn);
+    };
+
+    feedbackEl.appendChild(interestedBtn);
+    feedbackEl.appendChild(notInterestedBtn);
+
+    // 如果有个性化评分，显示出来（调试用）
+    if (item._personalizedScore !== undefined && window.location.search.includes('debug')) {
+      const scoreEl = document.createElement("span");
+      scoreEl.className = "personalized-score";
+      scoreEl.textContent = `评分: ${item._personalizedScore.toFixed(3)}`;
+      feedbackEl.appendChild(scoreEl);
+    }
+
+    node.appendChild(feedbackEl);
+  }
+
   return node;
+}
+
+function handleFeedback(item, tone, isInterested, button) {
+  if (!state.personalizationEngine) return;
+
+  if (isInterested) {
+    state.personalizationEngine.markInterested(item, tone);
+    button.classList.add("clicked");
+    setTimeout(() => {
+      button.classList.remove("clicked");
+      button.classList.add("active");
+    }, 300);
+  } else {
+    state.personalizationEngine.markNotInterested(item, tone);
+    button.classList.add("clicked");
+    setTimeout(() => {
+      button.classList.remove("clicked");
+      button.classList.add("active");
+    }, 300);
+  }
+
+  // 重新渲染列表以应用新的排序
+  setTimeout(() => {
+    renderList();
+  }, 500);
 }
 
 function buildSourceGroupNode(source, items) {
@@ -731,6 +819,15 @@ async function loadSourceStatusData() {
 }
 
 async function init() {
+  // 初始化个性化引擎
+  if (typeof PersonalizationEngine !== 'undefined') {
+    state.personalizationEngine = new PersonalizationEngine();
+    console.log('PersonalizationEngine initialized:', state.personalizationEngine.getStats());
+  } else {
+    console.warn('PersonalizationEngine not loaded, personalization disabled');
+    state.personalizationEnabled = false;
+  }
+
   const [newsResult, waytoagiResult, statusResult] = await Promise.allSettled([
     loadNewsData(),
     loadWaytoagiData(),

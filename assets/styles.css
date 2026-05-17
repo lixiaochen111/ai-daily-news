@@ -921,3 +921,73 @@ summary:focus-visible {
     flex-direction: column;
   }
 }
+
+/* Personalization Feedback Buttons */
+.feedback-buttons {
+  display: inline-flex;
+  gap: 6px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.feedback-btn {
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.feedback-btn:hover {
+  border-color: var(--accent);
+  background: var(--surface-soft);
+  transform: scale(1.05);
+}
+
+.feedback-btn:active,
+.feedback-btn.clicked {
+  transform: scale(0.95);
+}
+
+.feedback-btn.active {
+  border-color: var(--accent);
+  background: rgba(18, 106, 115, 0.1);
+}
+
+.feedback-interested.active {
+  border-color: var(--good);
+  background: rgba(31, 122, 77, 0.1);
+}
+
+.feedback-not-interested.active {
+  border-color: var(--muted);
+  background: rgba(102, 100, 95, 0.1);
+  opacity: 0.6;
+}
+
+.personalized-score {
+  margin-left: 6px;
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--surface-soft);
+  font-family: "SF Mono", "Monaco", "Cascadia Code", monospace;
+}
+
+/* Responsive adjustments for feedback buttons */
+@media (max-width: 600px) {
+  .feedback-buttons {
+    gap: 4px;
+  }
+
+  .feedback-btn {
+    padding: 3px 8px;
+    font-size: 13px;
+  }
+}
