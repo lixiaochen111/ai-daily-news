@@ -16,7 +16,7 @@ import os
 from typing import Dict, Any, Optional, List
 
 from scripts.ai_filter.easyrouter_client import EasyRouterClient
-from scripts.ai_filter.glm_client import GLMClient
+from scripts.ai_filter.glm_client import GLMClient, QuotaExceededError
 from scripts.ai_filter.language_detector import detect_language
 from scripts.ai_filter.prompts import build_classification_prompt, build_analysis_prompt
 
@@ -117,6 +117,7 @@ class Tier2Pipeline:
 
         Returns:
             True if GLM classifies as relevant, False otherwise
+            None if GLM unavailable (triggers degradation to skip this stage)
         """
         # Build classification prompt (always Chinese)
         system_prompt = "你是一个AI内容分类器，专注于判断内容是否与AI+设计相关。"
@@ -140,8 +141,14 @@ class Tier2Pipeline:
             # Return classification result
             return classification.get("is_relevant", False)
 
-        except (json.JSONDecodeError, KeyError, Exception):
-            # If classification fails, reject to be safe
+        except QuotaExceededError as e:
+            # GLM quota exceeded - return None to trigger degradation
+            print(f"⚠️  GLM quota exceeded, degrading to skip GLM stage: {e}")
+            return None
+
+        except (json.JSONDecodeError, KeyError, Exception) as e:
+            # Other errors - reject to be safe
+            print(f"⚠️  GLM classification error: {e}")
             return False
 
     def _ai_deep_analysis(self, item: Dict[str, Any], source_config: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -227,9 +234,16 @@ class Tier2Pipeline:
         if not self._keyword_filter(item, source_config):
             return None
 
-        # Stage 2: GLM classification
-        if not self._glm_classify(item):
+        # Stage 2: GLM classification (with degradation support)
+        glm_result = self._glm_classify(item)
+        if glm_result is None:
+            # GLM unavailable (quota exceeded) - skip this stage, proceed to deep analysis
+            # This is a graceful degradation: keyword filter already passed
+            print(f"ℹ️  Skipping GLM stage for: {item.get('title', 'unknown')[:50]}...")
+        elif glm_result is False:
+            # GLM explicitly rejected this item
             return None
+        # If glm_result is True, continue to deep analysis
 
         # Stage 3: AI deep analysis
         ai_analysis = self._ai_deep_analysis(item, source_config)

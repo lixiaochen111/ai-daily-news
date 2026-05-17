@@ -123,14 +123,17 @@
 
     <div class="form-control w-full mb-4">
       <label class="label">
-        <span class="label-text">智谱 AI API 密钥</span>
+        <span class="label-text flex items-center gap-2">
+          智谱 AI API 密钥
+          <span class="badge badge-success badge-sm">已含免费配额</span>
+        </span>
         <span class="label-text-alt">可选</span>
       </label>
       <div class="join w-full">
         <input
           type="password"
           id="glm-api-key"
-          placeholder="输入智谱AI密钥"
+          placeholder="留空使用默认免费配额，或填入你自己的密钥获得独立配额"
           class="input input-bordered join-item flex-1 font-mono text-sm"
         />
         <button type="button" id="toggle-glm-key" class="btn btn-square join-item">
@@ -138,20 +141,25 @@
         </button>
       </div>
       <label class="label">
-        <span class="label-text-alt">用于免费GLM-4.7-Flash模型（初筛分类）</span>
+        <span class="label-text-alt">
+          💡 默认已包含免费配额（所有用户共享），无需配置。如有自己的密钥可填入以获得独立配额。
+        </span>
       </label>
     </div>
 
     <div class="form-control w-full mb-4">
       <label class="label">
-        <span class="label-text">EasyRouter API 密钥</span>
+        <span class="label-text flex items-center gap-2">
+          EasyRouter API 密钥
+          <span class="badge badge-warning badge-sm">需要你自己的</span>
+        </span>
         <span class="label-text-alt">可选</span>
       </label>
       <div class="join w-full">
         <input
           type="password"
           id="easyrouter-api-key"
-          placeholder="sk-xxxxxxxxxxxxxxxxxxxx"
+          placeholder="sk-xxxxxxxxxxxxxxxxxxxx（需自行注册获取）"
           class="input input-bordered join-item flex-1 font-mono text-sm"
         />
         <button type="button" id="toggle-api-key-step1" class="btn btn-square join-item">
@@ -159,7 +167,9 @@
         </button>
       </div>
       <label class="label">
-        <span class="label-text-alt">用于DeepSeek/GPT-4o Mini（深度分析）</span>
+        <span class="label-text-alt">
+          🔑 需配置你自己的密钥。用于DeepSeek/GPT-4o Mini深度分析，约¥0.08-0.25/天。
+        </span>
       </label>
     </div>
 
@@ -177,38 +187,70 @@
             <span>三层智能筛选：关键词过滤 → GLM免费初筛 → DeepSeek/GPT深度分析</span>
           </div>
 
-          <div>
-            <p class="font-semibold mb-2">1️⃣ 智谱AI（GLM-4.7-Flash）- 免费初筛</p>
-            <ul class="list-disc list-inside space-y-1 ml-2 text-xs">
-              <li>用途：快速分类，过滤明显无关内容</li>
-              <li>获取：<a href="https://open.bigmodel.cn/" class="link link-primary" target="_blank">open.bigmodel.cn</a> 注册后获取API Key</li>
-              <li>成本：<strong class="text-success">完全免费</strong>（每日有配额限制）</li>
-            </ul>
+          <div class="alert alert-success text-xs mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+              <p class="font-medium">1️⃣ 智谱AI（GLM-4.7-Flash）- 免费初筛</p>
+              <p><strong class="text-success">✅ 已内置默认配额，无需配置</strong></p>
+            </div>
           </div>
 
           <div>
-            <p class="font-semibold mb-2">2️⃣ EasyRouter - 付费深度分析</p>
-            <ul class="list-disc list-inside space-y-1 ml-2 text-xs">
-              <li>用途：精准评分，选出高质量内容</li>
-              <li>模型：DeepSeek（中文）+ GPT-4o Mini（英文）</li>
-              <li>获取：<a href="https://easyrouter.ai/" class="link link-primary" target="_blank">easyrouter.ai</a> 注册后创建API密钥</li>
-              <li>成本：约 <strong>¥0.08-0.25/天</strong></li>
+            <ul class="list-disc list-inside space-y-1 ml-2 text-xs mb-3">
+              <li><strong>用途</strong>：快速分类，过滤明显无关内容</li>
+              <li><strong>配额</strong>：项目提供的默认免费配额（所有用户共享）</li>
+              <li><strong>成本</strong>：<strong class="text-success">完全免费</strong></li>
+              <li><strong>可选配置</strong>：如有自己的智谱AI账号，填入密钥可获得独立配额
+                <a href="https://open.bigmodel.cn/" class="link link-primary" target="_blank">注册地址</a>
+              </li>
             </ul>
           </div>
 
-          <div class="alert alert-warning text-xs">
+          <div class="divider my-2"></div>
+
+          <div class="alert alert-warning text-xs mb-3">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-4 h-4">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <div>
-              <p class="font-medium">推荐配置</p>
-              <p>两个密钥都配置：免费初筛 + 精准深度分析，性价比最高</p>
-              <p>只配置EasyRouter：跳过初筛，成本稍高但更简单</p>
+              <p class="font-medium">2️⃣ EasyRouter - 付费深度分析</p>
+              <p><strong>⚠️ 需配置你自己的API密钥</strong></p>
             </div>
           </div>
 
-          <p class="text-xs text-base-content/60">
-            💡 不需要AI筛选？留空两个字段，使用关键词筛选。部署后也可在仓库Settings → Secrets中添加。
+          <div>
+            <ul class="list-disc list-inside space-y-1 ml-2 text-xs mb-3">
+              <li><strong>用途</strong>：精准评分，选出高质量内容</li>
+              <li><strong>模型</strong>：DeepSeek（中文） + GPT-4o Mini（英文）</li>
+              <li><strong>获取</strong>：
+                <a href="https://easyrouter.ai/" class="link link-primary" target="_blank">easyrouter.ai</a>
+                注册后创建API密钥
+              </li>
+              <li><strong>成本</strong>：约 <strong>¥0.08-0.25/天</strong>（按你的实际使用量计费）</li>
+            </ul>
+          </div>
+
+          <div class="divider my-2"></div>
+
+          <div class="bg-base-300 rounded-lg p-3 text-xs">
+            <p class="font-semibold mb-2">💡 配置建议</p>
+            <ul class="space-y-1">
+              <li>• <strong>推荐</strong>：只配置EasyRouter密钥
+                <span class="text-base-content/60">（免费初筛已内置，你只需配置深度分析）</span>
+              </li>
+              <li>• <strong>进阶</strong>：两个都配置
+                <span class="text-base-content/60">（使用你自己的GLM配额，不受共享限制）</span>
+              </li>
+              <li>• <strong>极简</strong>：两个都不配置
+                <span class="text-base-content/60">（仅使用关键词筛选，无AI调用）</span>
+              </li>
+            </ul>
+          </div>
+
+          <p class="text-xs text-base-content/60 mt-3">
+            💡 部署后也可在仓库Settings → Secrets中添加或修改密钥。
           </p>
         </div>
       </div>
