@@ -15,6 +15,7 @@ const state = {
     githubUsername: '',
     email: '',
     repoName: '',
+    easyrouterApiKey: '',
 
     // Step 2: GitHub Auth
     githubToken: '',
@@ -166,11 +167,15 @@ function setupStep1Handlers() {
   const usernameInput = document.getElementById('github-username');
   const emailInput = document.getElementById('email');
   const repoInput = document.getElementById('repo-name');
+  const apiKeyInput = document.getElementById('easyrouter-api-key');
+  const toggleApiKeyBtn = document.getElementById('toggle-api-key-step1');
+  const eyeIcon = document.getElementById('eye-icon-step1');
 
   // Restore saved values
   if (state.config.githubUsername) usernameInput.value = state.config.githubUsername;
   if (state.config.email) emailInput.value = state.config.email;
   if (state.config.repoName) repoInput.value = state.config.repoName;
+  if (state.config.easyrouterApiKey) apiKeyInput.value = state.config.easyrouterApiKey;
 
   // Update preview in real-time
   usernameInput.addEventListener('input', (e) => {
@@ -185,6 +190,21 @@ function setupStep1Handlers() {
   repoInput.addEventListener('input', (e) => {
     state.config.repoName = e.target.value.trim();
     updateSitePreview();
+  });
+
+  apiKeyInput.addEventListener('input', (e) => {
+    state.config.easyrouterApiKey = e.target.value.trim();
+  });
+
+  // Toggle API key visibility
+  toggleApiKeyBtn.addEventListener('click', () => {
+    if (apiKeyInput.type === 'password') {
+      apiKeyInput.type = 'text';
+      eyeIcon.textContent = '🙈';
+    } else {
+      apiKeyInput.type = 'password';
+      eyeIcon.textContent = '👁️';
+    }
   });
 
   // Initial preview update
@@ -720,6 +740,14 @@ function populateConfigSummary() {
   document.getElementById('summary-email').textContent = state.config.email || '-';
   document.getElementById('summary-repo').textContent = state.config.repoName || '-';
 
+  // AI Filter status
+  const aiFilterStatus = document.getElementById('summary-ai-filter');
+  if (state.config.easyrouterApiKey) {
+    aiFilterStatus.innerHTML = '<span class="badge badge-success badge-sm">已启用</span>';
+  } else {
+    aiFilterStatus.innerHTML = '<span class="badge badge-ghost badge-sm">未配置</span>';
+  }
+
   // RSS Feeds
   const summaryFeeds = document.getElementById('summary-feeds');
   if (state.config.feeds.length === 0) {
@@ -1061,6 +1089,9 @@ function getDeploymentConfig() {
       articlesPerPage: state.config.articlesPerPage,
       enableComments: state.config.enableComments,
       enableAnalytics: state.config.enableAnalytics
+    },
+    secrets: {
+      easyrouterApiKey: state.config.easyrouterApiKey
     }
   };
 }
