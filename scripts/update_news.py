@@ -3110,18 +3110,17 @@ def main() -> int:
                 str(normalized.get("title") or "")
             ):
                 continue
-            normalized = add_ai_relevance_fields(normalized)
             latest_items_all.append(normalized)
 
     latest_items_all = normalize_aihubtoday_records(latest_items_all)
 
     latest_items_all.sort(key=lambda x: event_time(x) or datetime.min.replace(tzinfo=UTC), reverse=True)
-    latest_items = [record for record in latest_items_all if record.get("ai_is_related", is_ai_related_record(record))]
 
     # Apply AI filtering pipeline (Tier 0/1/2)
+    # Note: Pass ALL items to the filter, let whitelist routing handle classification
     ai_filter = AIContentFilter()
-    latest_items_before_filter = len(latest_items)
-    latest_items = ai_filter.filter_batch(latest_items)
+    latest_items_before_filter = len(latest_items_all)  # Use raw RSS count
+    latest_items = ai_filter.filter_batch(latest_items_all)  # Pass all items
     filter_stats = ai_filter.get_statistics(latest_items)
     filter_stats["items_before_filter"] = latest_items_before_filter
     filter_stats["items_after_filter"] = len(latest_items)
@@ -3129,6 +3128,10 @@ def main() -> int:
         f"{len(latest_items) / latest_items_before_filter * 100:.1f}%"
         if latest_items_before_filter > 0 else "N/A"
     )
+
+    # Add AI relevance labels AFTER filtering (for frontend display only, not for filtering)
+    for item in latest_items:
+        add_ai_relevance_fields(item)
 
     title_cache = load_title_zh_cache(title_cache_path)
     latest_items, latest_items_all, title_cache = add_bilingual_fields(
