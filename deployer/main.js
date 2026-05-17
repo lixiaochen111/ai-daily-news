@@ -385,10 +385,16 @@ async function configureGitHubActions(octokit, config, repo) {
 }
 
 function generateWorkflowYaml(config) {
-  const hasApiKey = config.secrets && config.secrets.easyrouterApiKey;
-  const envSection = hasApiKey ? `
-        env:
-          EASYROUTER_API_KEY: \${{ secrets.EASYROUTER_API_KEY }}` : '';
+  const hasGlmKey = config.secrets && config.secrets.glmApiKey;
+  const hasEasyRouterKey = config.secrets && config.secrets.easyrouterApiKey;
+
+  let envSection = '';
+  if (hasGlmKey || hasEasyRouterKey) {
+    const envVars = [];
+    if (hasGlmKey) envVars.push('          GLM_API_KEY: ${{ secrets.GLM_API_KEY }}');
+    if (hasEasyRouterKey) envVars.push('          EASYROUTER_API_KEY: ${{ secrets.EASYROUTER_API_KEY }}');
+    envSection = `\n        env:\n${envVars.join('\n')}`;
+  }
 
   return `name: Update News
 
@@ -480,7 +486,12 @@ async function enableGitHubPages(octokit, config, repo) {
 }
 
 async function configureGitHubSecrets(octokit, config, repo) {
-  if (!config.secrets || !config.secrets.easyrouterApiKey) {
+  if (!config.secrets) {
+    return;
+  }
+
+  const { glmApiKey, easyrouterApiKey } = config.secrets;
+  if (!glmApiKey && !easyrouterApiKey) {
     return;
   }
 
@@ -491,25 +502,45 @@ async function configureGitHubSecrets(octokit, config, repo) {
       repo: config.github.repoName
     });
 
-    // Encrypt the secret using libsodium
+    // Encrypt secrets using libsodium
     const sodium = require('libsodium-wrappers');
     await sodium.ready;
 
-    const secretBytes = Buffer.from(config.secrets.easyrouterApiKey);
     const keyBytes = Buffer.from(publicKey.key, 'base64');
-    const encryptedBytes = sodium.crypto_box_seal(secretBytes, keyBytes);
-    const encryptedValue = Buffer.from(encryptedBytes).toString('base64');
 
-    // Create or update the secret
-    await octokit.rest.actions.createOrUpdateRepoSecret({
-      owner: config.github.username,
-      repo: config.github.repoName,
-      secret_name: 'EASYROUTER_API_KEY',
-      encrypted_value: encryptedValue,
-      key_id: publicKey.key_id
-    });
+    // Configure GLM_API_KEY if provided
+    if (glmApiKey) {
+      const glmSecretBytes = Buffer.from(glmApiKey);
+      const glmEncryptedBytes = sodium.crypto_box_seal(glmSecretBytes, keyBytes);
+      const glmEncryptedValue = Buffer.from(glmEncryptedBytes).toString('base64');
 
-    console.log('GitHub Secret configured: EASYROUTER_API_KEY');
+      await octokit.rest.actions.createOrUpdateRepoSecret({
+        owner: config.github.username,
+        repo: config.github.repoName,
+        secret_name: 'GLM_API_KEY',
+        encrypted_value: glmEncryptedValue,
+        key_id: publicKey.key_id
+      });
+
+      console.log('GitHub Secret configured: GLM_API_KEY');
+    }
+
+    // Configure EASYROUTER_API_KEY if provided
+    if (easyrouterApiKey) {
+      const erSecretBytes = Buffer.from(easyrouterApiKey);
+      const erEncryptedBytes = sodium.crypto_box_seal(erSecretBytes, keyBytes);
+      const erEncryptedValue = Buffer.from(erEncryptedBytes).toString('base64');
+
+      await octokit.rest.actions.createOrUpdateRepoSecret({
+        owner: config.github.username,
+        repo: config.github.repoName,
+        secret_name: 'EASYROUTER_API_KEY',
+        encrypted_value: erEncryptedValue,
+        key_id: publicKey.key_id
+      });
+
+      console.log('GitHub Secret configured: EASYROUTER_API_KEY');
+    }
   } catch (error) {
     console.error('Failed to configure GitHub Secrets:', error);
     // Don't throw - secrets are optional

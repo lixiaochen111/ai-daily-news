@@ -16,6 +16,7 @@ import os
 from typing import Dict, Any, Optional, List
 
 from scripts.ai_filter.easyrouter_client import EasyRouterClient
+from scripts.ai_filter.glm_client import GLMClient
 from scripts.ai_filter.language_detector import detect_language
 from scripts.ai_filter.prompts import build_classification_prompt, build_analysis_prompt
 
@@ -52,11 +53,15 @@ class Tier2Pipeline:
     ]
 
     def __init__(self):
-        """Initialize Tier 2 pipeline with EasyRouter client and model configuration."""
-        self.client = EasyRouterClient()
+        """Initialize Tier 2 pipeline with GLM and EasyRouter clients."""
+        # GLM client for free initial classification
+        self.glm_client = GLMClient()
+
+        # EasyRouter client for paid deep analysis
+        self.easyrouter_client = EasyRouterClient()
 
         # Model configuration from environment variables
-        self.model_classify = os.getenv("AI_MODEL_CLASSIFY", "glm-4-flash")
+        self.model_classify = os.getenv("AI_MODEL_CLASSIFY", "glm-4.7-flash")
         self.model_zh = os.getenv("AI_MODEL_ANALYZE_ZH", "deepseek-chat")
         self.model_en = os.getenv("AI_MODEL_ANALYZE_EN", "gpt-4o-mini")
 
@@ -121,7 +126,7 @@ class Tier2Pipeline:
         )
 
         try:
-            response = self.client.call_model(
+            response = self.glm_client.call_model(
                 model=self.model_classify,
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
@@ -172,7 +177,7 @@ class Tier2Pipeline:
         )
 
         try:
-            response = self.client.call_model(
+            response = self.easyrouter_client.call_model(
                 model=model,
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,

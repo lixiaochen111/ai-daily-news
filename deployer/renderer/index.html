@@ -123,6 +123,27 @@
 
     <div class="form-control w-full mb-4">
       <label class="label">
+        <span class="label-text">智谱 AI API 密钥</span>
+        <span class="label-text-alt">可选</span>
+      </label>
+      <div class="join w-full">
+        <input
+          type="password"
+          id="glm-api-key"
+          placeholder="输入智谱AI密钥"
+          class="input input-bordered join-item flex-1 font-mono text-sm"
+        />
+        <button type="button" id="toggle-glm-key" class="btn btn-square join-item">
+          <span id="eye-icon-glm">👁️</span>
+        </button>
+      </div>
+      <label class="label">
+        <span class="label-text-alt">用于免费GLM-4.7-Flash模型（初筛分类）</span>
+      </label>
+    </div>
+
+    <div class="form-control w-full mb-4">
+      <label class="label">
         <span class="label-text">EasyRouter API 密钥</span>
         <span class="label-text-alt">可选</span>
       </label>
@@ -138,34 +159,41 @@
         </button>
       </div>
       <label class="label">
-        <span class="label-text-alt">用于启用AI智能筛选功能，留空则禁用AI筛选</span>
+        <span class="label-text-alt">用于DeepSeek/GPT-4o Mini（深度分析）</span>
       </label>
     </div>
 
     <div class="collapse collapse-arrow bg-base-200 mb-4">
       <input type="checkbox" />
       <div class="collapse-title font-medium text-sm">
-        什么是 EasyRouter API？如何获取密钥？
+        🤖 AI 筛选说明：为什么需要两个密钥？
       </div>
       <div class="collapse-content">
         <div class="space-y-3 text-sm">
-          <p><strong>EasyRouter</strong> 是一个统一的 AI 模型访问平台，本项目使用它来调用多个 AI 模型进行内容筛选。</p>
-
           <div class="alert alert-info text-xs">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-4 h-4">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <span>AI 筛选功能：自动识别高质量 AI/设计内容，过滤无关信息</span>
+            <span>三层智能筛选：关键词过滤 → GLM免费初筛 → DeepSeek/GPT深度分析</span>
           </div>
 
           <div>
-            <p class="font-semibold mb-2">获取步骤：</p>
-            <ol class="list-decimal list-inside space-y-1 ml-2">
-              <li>访问 <a href="https://easyrouter.ai/" class="link link-primary" target="_blank">easyrouter.ai</a></li>
-              <li>注册账号并登录</li>
-              <li>进入控制台创建 API 密钥</li>
-              <li>复制密钥并粘贴到上方输入框</li>
-            </ol>
+            <p class="font-semibold mb-2">1️⃣ 智谱AI（GLM-4.7-Flash）- 免费初筛</p>
+            <ul class="list-disc list-inside space-y-1 ml-2 text-xs">
+              <li>用途：快速分类，过滤明显无关内容</li>
+              <li>获取：<a href="https://open.bigmodel.cn/" class="link link-primary" target="_blank">open.bigmodel.cn</a> 注册后获取API Key</li>
+              <li>成本：<strong class="text-success">完全免费</strong>（每日有配额限制）</li>
+            </ul>
+          </div>
+
+          <div>
+            <p class="font-semibold mb-2">2️⃣ EasyRouter - 付费深度分析</p>
+            <ul class="list-disc list-inside space-y-1 ml-2 text-xs">
+              <li>用途：精准评分，选出高质量内容</li>
+              <li>模型：DeepSeek（中文）+ GPT-4o Mini（英文）</li>
+              <li>获取：<a href="https://easyrouter.ai/" class="link link-primary" target="_blank">easyrouter.ai</a> 注册后创建API密钥</li>
+              <li>成本：约 <strong>¥0.08-0.25/天</strong></li>
+            </ul>
           </div>
 
           <div class="alert alert-warning text-xs">
@@ -173,13 +201,14 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <div>
-              <p class="font-medium">成本预估</p>
-              <p>AI 筛选日均成本约 ¥0.25，使用 DeepSeek 和 GPT-4o Mini 模型</p>
+              <p class="font-medium">推荐配置</p>
+              <p>两个密钥都配置：免费初筛 + 精准深度分析，性价比最高</p>
+              <p>只配置EasyRouter：跳过初筛，成本稍高但更简单</p>
             </div>
           </div>
 
           <p class="text-xs text-base-content/60">
-            💡 如果暂时不需要 AI 筛选，可以留空此字段。部署后也可以在仓库的 Settings → Secrets 中添加。
+            💡 不需要AI筛选？留空两个字段，使用关键词筛选。部署后也可在仓库Settings → Secrets中添加。
           </p>
         </div>
       </div>

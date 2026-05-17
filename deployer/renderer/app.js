@@ -15,6 +15,7 @@ const state = {
     githubUsername: '',
     email: '',
     repoName: '',
+    glmApiKey: '',
     easyrouterApiKey: '',
 
     // Step 2: GitHub Auth
@@ -167,6 +168,9 @@ function setupStep1Handlers() {
   const usernameInput = document.getElementById('github-username');
   const emailInput = document.getElementById('email');
   const repoInput = document.getElementById('repo-name');
+  const glmKeyInput = document.getElementById('glm-api-key');
+  const toggleGlmBtn = document.getElementById('toggle-glm-key');
+  const glmEyeIcon = document.getElementById('eye-icon-glm');
   const apiKeyInput = document.getElementById('easyrouter-api-key');
   const toggleApiKeyBtn = document.getElementById('toggle-api-key-step1');
   const eyeIcon = document.getElementById('eye-icon-step1');
@@ -175,6 +179,7 @@ function setupStep1Handlers() {
   if (state.config.githubUsername) usernameInput.value = state.config.githubUsername;
   if (state.config.email) emailInput.value = state.config.email;
   if (state.config.repoName) repoInput.value = state.config.repoName;
+  if (state.config.glmApiKey) glmKeyInput.value = state.config.glmApiKey;
   if (state.config.easyrouterApiKey) apiKeyInput.value = state.config.easyrouterApiKey;
 
   // Update preview in real-time
@@ -192,11 +197,26 @@ function setupStep1Handlers() {
     updateSitePreview();
   });
 
+  glmKeyInput.addEventListener('input', (e) => {
+    state.config.glmApiKey = e.target.value.trim();
+  });
+
   apiKeyInput.addEventListener('input', (e) => {
     state.config.easyrouterApiKey = e.target.value.trim();
   });
 
-  // Toggle API key visibility
+  // Toggle GLM key visibility
+  toggleGlmBtn.addEventListener('click', () => {
+    if (glmKeyInput.type === 'password') {
+      glmKeyInput.type = 'text';
+      glmEyeIcon.textContent = '🙈';
+    } else {
+      glmKeyInput.type = 'password';
+      glmEyeIcon.textContent = '👁️';
+    }
+  });
+
+  // Toggle EasyRouter key visibility
   toggleApiKeyBtn.addEventListener('click', () => {
     if (apiKeyInput.type === 'password') {
       apiKeyInput.type = 'text';
@@ -742,10 +762,17 @@ function populateConfigSummary() {
 
   // AI Filter status
   const aiFilterStatus = document.getElementById('summary-ai-filter');
-  if (state.config.easyrouterApiKey) {
-    aiFilterStatus.innerHTML = '<span class="badge badge-success badge-sm">已启用</span>';
+  const hasGlm = state.config.glmApiKey;
+  const hasEasyRouter = state.config.easyrouterApiKey;
+
+  if (hasGlm && hasEasyRouter) {
+    aiFilterStatus.innerHTML = '<span class="badge badge-success badge-sm">完整配置（免费初筛+深度分析）</span>';
+  } else if (hasEasyRouter) {
+    aiFilterStatus.innerHTML = '<span class="badge badge-warning badge-sm">仅深度分析（跳过GLM初筛）</span>';
+  } else if (hasGlm) {
+    aiFilterStatus.innerHTML = '<span class="badge badge-warning badge-sm">仅GLM初筛（无深度分析）</span>';
   } else {
-    aiFilterStatus.innerHTML = '<span class="badge badge-ghost badge-sm">未配置</span>';
+    aiFilterStatus.innerHTML = '<span class="badge badge-ghost badge-sm">未配置（仅关键词筛选）</span>';
   }
 
   // RSS Feeds
@@ -1091,6 +1118,7 @@ function getDeploymentConfig() {
       enableAnalytics: state.config.enableAnalytics
     },
     secrets: {
+      glmApiKey: state.config.glmApiKey,
       easyrouterApiKey: state.config.easyrouterApiKey
     }
   };
