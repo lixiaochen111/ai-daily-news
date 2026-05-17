@@ -28,8 +28,10 @@ from urllib3.util.retry import Retry
 
 try:
     from scripts.ai_relevance import add_ai_relevance_fields, score_ai_relevance
+    from scripts.ai_filter.main_filter import AIContentFilter
 except ModuleNotFoundError:  # pragma: no cover - direct `python scripts/update_news.py`
     from ai_relevance import add_ai_relevance_fields, score_ai_relevance
+    from ai_filter.main_filter import AIContentFilter
 
 try:
     import feedparser
@@ -3115,6 +3117,19 @@ def main() -> int:
 
     latest_items_all.sort(key=lambda x: event_time(x) or datetime.min.replace(tzinfo=UTC), reverse=True)
     latest_items = [record for record in latest_items_all if record.get("ai_is_related", is_ai_related_record(record))]
+
+    # Apply AI filtering pipeline (Tier 0/1/2)
+    ai_filter = AIContentFilter()
+    latest_items_before_filter = len(latest_items)
+    latest_items = ai_filter.filter_batch(latest_items)
+    filter_stats = ai_filter.get_statistics(latest_items)
+    filter_stats["items_before_filter"] = latest_items_before_filter
+    filter_stats["items_after_filter"] = len(latest_items)
+    filter_stats["filter_pass_rate"] = (
+        f"{len(latest_items) / latest_items_before_filter * 100:.1f}%"
+        if latest_items_before_filter > 0 else "N/A"
+    )
+
     title_cache = load_title_zh_cache(title_cache_path)
     latest_items, latest_items_all, title_cache = add_bilingual_fields(
         latest_items,
@@ -3171,6 +3186,7 @@ def main() -> int:
         "total_items_all_mode": len(latest_items_all_dedup),
         "topic_filter": "ai_relevance_scoring_v0_4",
         "ai_relevance_threshold": 0.65,
+        "ai_filter_stats": filter_stats,
         "archive_total": len(archive),
         "site_count": len(site_stat),
         "source_count": len({f"{i['site_id']}::{i['source']}" for i in latest_items_ai_dedup}),
