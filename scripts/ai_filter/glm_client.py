@@ -138,8 +138,12 @@ class GLMClient:
                 max_tokens=max_tokens
             )
 
+            # GLM-4.7-Flash returns content in reasoning_content, not content
+            message = response.choices[0].message
+            content = message.content or message.reasoning_content or ""
+
             return {
-                "content": response.choices[0].message.content,
+                "content": content,
                 "usage": {
                     "prompt_tokens": response.usage.prompt_tokens,
                     "completion_tokens": response.usage.completion_tokens,
