@@ -43,11 +43,14 @@ class Tier1Filter:
 
         Args:
             item: Content item with title, url, source, site_name
-            source_config: Source configuration dictionary
+            source_config: Source configuration dictionary (can be None)
 
         Returns:
             Enriched item with AI metadata if accepted, None if rejected
         """
+        # Handle missing source_config
+        if source_config is None:
+            source_config = {}
         # Detect language
         language = detect_language(
             title=item.get("title", ""),

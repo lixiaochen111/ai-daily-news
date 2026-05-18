@@ -232,11 +232,15 @@ class Tier2Pipeline:
 
         Args:
             item: Content item with title, url, source, site_name
-            source_config: Source configuration dictionary
+            source_config: Source configuration dictionary (can be None)
 
         Returns:
             Enriched item with AI metadata if accepted, None if rejected
         """
+        # Handle missing source_config
+        if source_config is None:
+            source_config = {}
+
         # Stage 1: Keyword filter
         if not self._keyword_filter(item, source_config):
             return None

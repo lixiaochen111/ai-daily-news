@@ -21,11 +21,15 @@ class Tier0Processor:
 
         Args:
             item: 原始内容项
-            source_config: 源配置字典
+            source_config: 源配置字典 (can be None)
 
         Returns:
             添加了元数据的内容项
         """
+        # Handle missing source_config
+        if source_config is None:
+            source_config = {}
+
         processed_item = item.copy()
 
         # Add internal tier tracking
