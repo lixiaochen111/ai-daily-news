@@ -429,7 +429,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install feedparser requests beautifulsoup4 python-dateutil pyyaml
+          pip install feedparser requests beautifulsoup4 python-dateutil pyyaml zhipuai openai
 
       - name: Update news data${envSection}
         run: |

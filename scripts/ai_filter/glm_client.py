@@ -2,7 +2,7 @@
 GLM API Client
 
 Wrapper for Zhipu AI's GLM-4.7-Flash model (free tier).
-Uses OpenAI-compatible API format with custom endpoint.
+Uses Zhipu AI's official SDK.
 
 Default API key is provided for all users (shared quota).
 Users can optionally configure their own key for dedicated quota.
@@ -10,7 +10,13 @@ Users can optionally configure their own key for dedicated quota.
 
 import os
 import time
-from openai import OpenAI
+
+try:
+    from zhipuai import ZhipuAI
+except ImportError:
+    # Fallback to OpenAI SDK (may have compatibility issues)
+    from openai import OpenAI
+    ZhipuAI = None
 
 
 class GLMClient:
@@ -51,11 +57,18 @@ class GLMClient:
         # Track if using default shared key
         self.using_shared_key = (self.api_key == self.DEFAULT_API_KEY)
 
-        # Initialize OpenAI client with Zhipu AI endpoint
-        self.client = OpenAI(
-            api_key=self.api_key,
-            base_url="https://open.bigmodel.cn/api/paas/v4"
-        )
+        # Initialize Zhipu AI client
+        if ZhipuAI:
+            # Use official Zhipu AI SDK (preferred)
+            self.client = ZhipuAI(api_key=self.api_key)
+            self.using_official_sdk = True
+        else:
+            # Fallback to OpenAI SDK (compatibility not guaranteed)
+            self.client = OpenAI(
+                api_key=self.api_key,
+                base_url="https://open.bigmodel.cn/api/paas/v4"
+            )
+            self.using_official_sdk = False
 
         # Rate limiting state
         self._request_times = []
