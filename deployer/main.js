@@ -253,6 +253,7 @@ async function uploadProjectFiles(octokit, config, repo) {
     { path: 'scripts/ai_filter/tier0_processor.py', source: 'scripts/ai_filter/tier0_processor.py', required: true },
     { path: 'scripts/ai_filter/tier1_filter.py', source: 'scripts/ai_filter/tier1_filter.py', required: true },
     { path: 'scripts/ai_filter/tier2_pipeline.py', source: 'scripts/ai_filter/tier2_pipeline.py', required: true },
+    { path: 'scripts/ai_filter/glm_client.py', source: 'scripts/ai_filter/glm_client.py', required: true },
     { path: 'scripts/ai_filter/easyrouter_client.py', source: 'scripts/ai_filter/easyrouter_client.py', required: true },
     { path: 'scripts/ai_filter/language_detector.py', source: 'scripts/ai_filter/language_detector.py', required: true },
     { path: 'scripts/ai_filter/prompts.py', source: 'scripts/ai_filter/prompts.py', required: true },
