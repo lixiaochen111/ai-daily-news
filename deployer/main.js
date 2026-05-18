@@ -434,7 +434,7 @@ jobs:
 
       - name: Update news data${envSection}
         run: |
-          export PYTHONPATH="${PYTHONPATH}:$PWD"
+          export PYTHONPATH="\${PYTHONPATH}:$PWD"
           python scripts/update_news.py --output-dir data --window-hours 24 --rss-opml feeds/follow.opml
 
       - name: Commit changes
