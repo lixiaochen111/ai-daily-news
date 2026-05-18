@@ -765,14 +765,15 @@ function populateConfigSummary() {
   const hasGlm = state.config.glmApiKey;
   const hasEasyRouter = state.config.easyrouterApiKey;
 
+  // Note: GLM has built-in default shared key, so it's always available
   if (hasGlm && hasEasyRouter) {
-    aiFilterStatus.innerHTML = '<span class="badge badge-success badge-sm">完整配置（免费初筛+深度分析）</span>';
+    aiFilterStatus.innerHTML = '<span class="badge badge-success badge-sm">完整配置（独立GLM配额+深度分析）</span>';
   } else if (hasEasyRouter) {
-    aiFilterStatus.innerHTML = '<span class="badge badge-warning badge-sm">仅深度分析（跳过GLM初筛）</span>';
+    aiFilterStatus.innerHTML = '<span class="badge badge-success badge-sm">标准配置（默认GLM初筛+深度分析）</span>';
   } else if (hasGlm) {
-    aiFilterStatus.innerHTML = '<span class="badge badge-warning badge-sm">仅GLM初筛（无深度分析）</span>';
+    aiFilterStatus.innerHTML = '<span class="badge badge-info badge-sm">独立GLM配额（仅初筛，无深度分析）</span>';
   } else {
-    aiFilterStatus.innerHTML = '<span class="badge badge-ghost badge-sm">未配置（仅关键词筛选）</span>';
+    aiFilterStatus.innerHTML = '<span class="badge badge-info badge-sm">基础配置（默认GLM初筛，无深度分析）</span>';
   }
 
   // RSS Feeds
