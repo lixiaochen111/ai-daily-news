@@ -23,10 +23,8 @@ class EasyRouterClient:
         self.api_key = os.environ.get('EASYROUTER_API_KEY')
         self.base_url = os.environ.get('EASYROUTER_BASE_URL')
 
-        if not self.api_key:
-            raise ValueError('EASYROUTER_API_KEY environment variable is required')
-        if not self.base_url:
-            raise ValueError('EASYROUTER_BASE_URL environment variable is required')
+        # Note: Don't raise error here - let it fail lazily when actually called
+        # This allows the system to work with only GLM (free tier)
 
     def call_model(
         self,
@@ -53,6 +51,12 @@ class EasyRouterClient:
         Raises:
             Exception: If API call fails
         """
+        # Check if configured at call time (lazy validation)
+        if not self.api_key:
+            raise ValueError('EASYROUTER_API_KEY environment variable is required for deep analysis')
+        if not self.base_url:
+            raise ValueError('EASYROUTER_BASE_URL environment variable is required for deep analysis')
+
         url = f"{self.base_url}/chat/completions"
         headers = {
             'Authorization': f'Bearer {self.api_key}',

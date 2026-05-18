@@ -109,7 +109,15 @@ class Tier1Filter:
                 # Reject: low relevance and low quality
                 return None
 
+        except ValueError as e:
+            # EasyRouter not configured - pass through item without deep analysis
+            # This allows the system to work with only GLM (free tier)
+            if "EASYROUTER_API_KEY" in str(e):
+                print(f"⚠️  EasyRouter not configured, skipping Tier 1 deep analysis")
+                # Return item without AI enrichment (will be filtered later by quality)
+                return None
+            raise
         except (json.JSONDecodeError, KeyError, Exception) as e:
             # If AI analysis fails, reject the item to be safe
-            # In production, you might want to log this error
+            print(f"⚠️  Tier 1 AI analysis failed: {e}")
             return None

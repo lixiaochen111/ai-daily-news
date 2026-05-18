@@ -215,8 +215,15 @@ class Tier2Pipeline:
                 # Reject: low relevance and low quality
                 return None
 
-        except (json.JSONDecodeError, KeyError, Exception):
+        except ValueError as e:
+            # EasyRouter not configured - cannot do deep analysis
+            if "EASYROUTER_API_KEY" in str(e):
+                print(f"⚠️  EasyRouter not configured, skipping Tier 2 deep analysis")
+                return None
+            raise
+        except (json.JSONDecodeError, KeyError, Exception) as e:
             # If analysis fails, reject to be safe
+            print(f"⚠️  Tier 2 AI analysis failed: {e}")
             return None
 
     def process_item(self, item: Dict[str, Any], source_config: Dict[str, Any]) -> Optional[Dict[str, Any]]:
