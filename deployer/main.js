@@ -278,7 +278,7 @@ async function uploadProjectFiles(octokit, config, repo) {
       } else if (file.source) {
         // Read from project
         content = await readProjectFile(projectRoot, file.source);
-        if (!content) {
+        if (content === null) {
           if (file.required) {
             throw new Error(`必需文件 ${file.source} 未找到`);
           }
