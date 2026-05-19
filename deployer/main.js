@@ -121,8 +121,8 @@ function setupIpcHandlers() {
       sendProgress('progress-actions', '正在配置 GitHub Actions...', 'in-progress');
       await configureGitHubActions(octokit, config, repo);
 
-      // Configure secrets if API key provided
-      if (config.secrets && config.secrets.easyrouterApiKey) {
+      // Configure secrets if any API key provided
+      if (config.secrets && (config.secrets.glmApiKey || config.secrets.easyrouterApiKey)) {
         await configureGitHubSecrets(octokit, config, repo);
       }
       sendProgress('progress-actions', 'GitHub Actions 配置成功 ✓', 'complete');
