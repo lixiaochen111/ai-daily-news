@@ -80,8 +80,41 @@ class Tier1Filter:
                 max_tokens=500
             )
 
-            # Parse AI response
-            ai_analysis = json.loads(response["content"])
+            # Parse AI response (robust JSON extraction)
+            import re
+            content = response["content"]
+            ai_analysis = None
+
+            # Strategy 1: Direct JSON parse
+            try:
+                ai_analysis = json.loads(content)
+            except json.JSONDecodeError:
+                pass
+
+            # Strategy 2: Find JSON object in response
+            if not ai_analysis:
+                json_match = re.search(r'\{[^{}]*"design_relevance"[^{}]*\}', content, re.DOTALL)
+                if json_match:
+                    try:
+                        ai_analysis = json.loads(json_match.group(0))
+                    except json.JSONDecodeError:
+                        pass
+
+            # Strategy 3: Find any JSON-like block
+            if not ai_analysis:
+                json_blocks = re.findall(r'\{[^{}]+\}', content, re.DOTALL)
+                for block in reversed(json_blocks):
+                    try:
+                        test_obj = json.loads(block)
+                        if "design_relevance" in test_obj:
+                            ai_analysis = test_obj
+                            break
+                    except json.JSONDecodeError:
+                        continue
+
+            if not ai_analysis:
+                print(f"⚠️  Tier 1 AI response unparseable: {content[:100]}...")
+                return None
 
             # Extract scores
             design_relevance = ai_analysis.get("design_relevance", 0)  # 0-10 scale
