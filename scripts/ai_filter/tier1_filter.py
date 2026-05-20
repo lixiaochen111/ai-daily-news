@@ -30,8 +30,8 @@ class Tier1Filter:
         self.client = EasyRouterClient()
 
         # Model configuration from environment variables
-        self.model_zh = os.getenv("AI_MODEL_ANALYZE_ZH", "deepseek-chat")
-        self.model_en = os.getenv("AI_MODEL_ANALYZE_EN", "gpt-4o-mini")
+        self.model_zh = os.getenv("AI_MODEL_ANALYZE_ZH", "deepseek-v4-pro")
+        self.model_en = os.getenv("AI_MODEL_ANALYZE_EN", "deepseek-v4-pro")
 
         # Filter thresholds
         self.design_relevance_threshold = 0.6  # 6/10 normalized to 0-1
