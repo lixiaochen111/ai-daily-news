@@ -393,7 +393,10 @@ function generateWorkflowYaml(config) {
   if (hasGlmKey || hasEasyRouterKey) {
     const envVars = [];
     if (hasGlmKey) envVars.push('          GLM_API_KEY: ${{ secrets.GLM_API_KEY }}');
-    if (hasEasyRouterKey) envVars.push('          EASYROUTER_API_KEY: ${{ secrets.EASYROUTER_API_KEY }}');
+    if (hasEasyRouterKey) {
+      envVars.push('          EASYROUTER_API_KEY: ${{ secrets.EASYROUTER_API_KEY }}');
+      envVars.push('          EASYROUTER_BASE_URL: https://easyrouter.io/v1');
+    }
     envSection = `\n        env:\n${envVars.join('\n')}`;
   }
 
