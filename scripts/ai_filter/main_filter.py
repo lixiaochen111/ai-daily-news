@@ -67,7 +67,9 @@ class AIContentFilter:
         return None
 
     def filter_batch(self, items: List[Dict]) -> List[Dict]:
-        """Filter a batch of items.
+        """Filter a batch of items (optimized with batch processing).
+
+        Groups items by tier and processes them in batches for better performance.
 
         Args:
             items: List of news items to filter
@@ -78,11 +80,65 @@ class AIContentFilter:
         if not self.enabled:
             return items
 
-        results = []
+        # Group items by tier
+        tier_groups = {
+            -1: [],  # blacklist
+            0: [],   # tier0
+            1: [],   # tier1
+            2: []    # tier2
+        }
+        tier_configs = {
+            -1: [],
+            0: [],
+            1: [],
+            2: []
+        }
+
         for item in items:
-            filtered_item = self.filter_item(item)
-            if filtered_item is not None:
-                results.append(filtered_item)
+            tier, source_config = self.router.classify_item(item)
+            tier_groups[tier].append(item)
+            tier_configs[tier].append(source_config)
+
+        results = []
+
+        # Process blacklist (discard)
+        # No-op, already excluded
+
+        # Process Tier 0 (pass-through with enrichment)
+        for item, config in zip(tier_groups[0], tier_configs[0]):
+            enriched = self.tier0_processor.process(item, config)
+            if enriched:
+                results.append(enriched)
+
+        # Process Tier 1 (individual, needs detailed analysis)
+        for item, config in zip(tier_groups[1], tier_configs[1]):
+            filtered = self.tier1_filter.filter_item(item, config)
+            if filtered:
+                results.append(filtered)
+
+        # Process Tier 2 (BATCH processing for GLM optimization)
+        if tier_groups[2]:
+            # Group by source_config to batch same-source items together
+            from collections import defaultdict
+            config_groups = defaultdict(list)
+            for item, config in zip(tier_groups[2], tier_configs[2]):
+                # Use config id as key (or None for unknown sources)
+                config_key = config.get('id') if config else 'unknown'
+                config_groups[config_key].append((item, config))
+
+            # Process each config group in batch
+            for config_key, item_config_pairs in config_groups.items():
+                batch_items = [pair[0] for pair in item_config_pairs]
+                common_config = item_config_pairs[0][1]  # All share same config
+
+                # Batch process (max 30 items at a time to avoid token limits)
+                batch_size = 30
+                for i in range(0, len(batch_items), batch_size):
+                    batch = batch_items[i:i+batch_size]
+                    batch_results = self.tier2_pipeline.process_batch(batch, common_config)
+                    for result in batch_results:
+                        if result:
+                            results.append(result)
 
         return results
 

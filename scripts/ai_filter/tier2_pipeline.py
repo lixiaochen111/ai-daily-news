@@ -29,27 +29,21 @@ class Tier2Pipeline:
     需要通过关键词初筛 → GLM快速分类 → AI深度分析。
     """
 
-    # Base keywords for AI + Design filtering
+    # Base keywords for AI + Design filtering (strict - reduce false positives)
     BASE_KEYWORDS = [
-        # AI keywords
-        "ai", "artificial intelligence", "machine learning", "ml", "llm",
-        "gpt", "chatgpt", "claude", "gemini", "deepseek",
-        "neural", "model", "training", "inference",
+        # Core AI keywords only (most specific)
+        "ai", "artificial intelligence", "machine learning", "ml",
+        "gpt", "chatgpt", "claude", "gemini", "deepseek", "llm",
+        "neural network", "deep learning", "transformer", "diffusion",
+        "openai", "anthropic", "stability ai", "midjourney", "dall-e",
 
-        # Design keywords
-        "design", "ui", "ux", "figma", "sketch", "adobe xd",
-        "prototype", "wireframe", "mockup", "layout",
-        "typography", "color", "icon", "component",
-        "design system", "design token",
+        # AI + Design/Creative intersection
+        "ai design", "generative design", "ai art", "generative art",
+        "text-to-image", "image generation", "ai illustration",
+        "ai video", "sora", "runway", "gen-2",
 
-        # Frontend/creative keywords
-        "frontend", "css", "web design", "responsive",
-        "animation", "interaction", "visual design",
-        "creative", "branding", "illustration",
-
-        # Tool keywords
-        "plugin", "extension", "workflow", "automation",
-        "productivity", "collaboration"
+        # Note: Removed generic terms (design, ui, ux, figma, frontend, css)
+        # to reduce false positives in general tech news
     ]
 
     def __init__(self):
@@ -107,6 +101,117 @@ class Tier2Pipeline:
                 return True
 
         return False
+
+    def _glm_classify_batch(self, items: List[Dict[str, Any]]) -> List[bool]:
+        """
+        Stage 2: GLM-4-Flash batch classification (optimized)
+
+        Process multiple items in one API call to reduce network overhead
+        and avoid rate limiting.
+
+        Args:
+            items: List of content items with title, url, source
+
+        Returns:
+            List of booleans (True if relevant, False if not, None if error)
+        """
+        if not items:
+            return []
+
+        # Build batch classification prompt
+        system_prompt = "你是一个AI内容分类器，专注于判断内容是否与AI+设计相关。"
+
+        # Format items as numbered list
+        items_text = []
+        for i, item in enumerate(items, 1):
+            items_text.append(f"{i}. 标题：{item.get('title', '')}，来源：{item.get('source', '')}")
+
+        user_prompt = f"""请判断以下每条新闻是否与AI+设计相关。
+
+新闻列表：
+{chr(10).join(items_text)}
+
+返回JSON数组格式（按序号对应）：
+[
+  {{"id": 1, "is_relevant": true, "reason": "简短原因"}},
+  {{"id": 2, "is_relevant": false, "reason": "简短原因"}},
+  ...
+]
+
+判断标准：
+- AI工具、产品、技术相关
+- 设计工具、UI/UX、创意应用相关
+- 排除：纯硬件、纯金融、娱乐八卦"""
+
+        try:
+            response = self.glm_client.call_model(
+                model=self.model_classify,
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                temperature=0.1,
+                max_tokens=1000  # Enough for batch response
+            )
+
+            content = response["content"]
+
+            # Parse batch response
+            import re
+
+            # Try to extract JSON array
+            results = None
+
+            # Strategy 1: Direct JSON array parse
+            try:
+                results = json.loads(content)
+            except json.JSONDecodeError:
+                pass
+
+            # Strategy 2: Find JSON array in content
+            if not results:
+                array_match = re.search(r'\[\s*\{.*?\}\s*\]', content, re.DOTALL)
+                if array_match:
+                    try:
+                        results = json.loads(array_match.group(0))
+                    except json.JSONDecodeError:
+                        pass
+
+            if not results or not isinstance(results, list):
+                print(f"⚠️  GLM batch response unparseable, degrading to single-item mode")
+                return [None] * len(items)  # Trigger fallback
+
+            # Map results back to items
+            output = []
+            for i in range(len(items)):
+                # Find matching result by id
+                result = next((r for r in results if r.get("id") == i + 1), None)
+                if result:
+                    output.append(result.get("is_relevant", False))
+                else:
+                    output.append(None)  # Missing result, will fallback
+
+            return output
+
+        except QuotaExceededError as e:
+            print(f"⚠️  GLM quota exceeded: {e}")
+            return [None] * len(items)
+
+        except RuntimeError as e:
+            error_msg = str(e)
+            if "1301" in error_msg or "不安全或敏感内容" in error_msg:
+                print(f"⚠️  GLM content safety triggered")
+                return [None] * len(items)
+            if "1234" in error_msg or "网络错误" in error_msg:
+                print(f"⚠️  GLM network error")
+                return [None] * len(items)
+            if "Connection error" in error_msg:
+                print(f"⚠️  GLM connection error")
+                return [None] * len(items)
+            print(f"⚠️  GLM batch API error: {e}")
+            return [None] * len(items)
+
+        except Exception as e:
+            print(f"⚠️  GLM batch classification error: {e}")
+            return [None] * len(items)
 
     def _glm_classify(self, item: Dict[str, Any]) -> bool:
         """
@@ -294,9 +399,81 @@ class Tier2Pipeline:
             print(f"⚠️  Tier 2 AI analysis failed: {e}")
             return None
 
+    def process_batch(self, items: List[Dict[str, Any]], source_config: Dict[str, Any]) -> List[Optional[Dict[str, Any]]]:
+        """
+        Process multiple items through the three-stage pipeline (optimized).
+
+        Uses batch GLM classification to reduce API calls and improve speed.
+
+        Args:
+            items: List of content items with title, url, source, site_name
+            source_config: Source configuration dictionary (can be None)
+
+        Returns:
+            List of enriched items (None if rejected)
+        """
+        if source_config is None:
+            source_config = {}
+
+        # Stage 1: Keyword filter (fast, local)
+        keyword_passed = []
+        for item in items:
+            if self._keyword_filter(item, source_config):
+                keyword_passed.append(item)
+
+        if not keyword_passed:
+            return [None] * len(items)
+
+        print(f"🔍 Tier 2 batch: {len(items)} items → {len(keyword_passed)} passed keyword filter")
+
+        # Stage 2: Batch GLM classification
+        glm_results = self._glm_classify_batch(keyword_passed)
+
+        # Filter items that passed GLM
+        glm_passed = []
+        for item, result in zip(keyword_passed, glm_results):
+            if result is None:
+                # GLM unavailable - degrade, pass through
+                glm_passed.append(item)
+            elif result is True:
+                # GLM accepted
+                glm_passed.append(item)
+            # If False, item is rejected
+
+        print(f"🤖 GLM batch classification: {len(keyword_passed)} items → {len(glm_passed)} passed")
+
+        # Stage 3: EasyRouter deep analysis (still individual, needs detailed scoring)
+        output = []
+        for i, item in enumerate(items):
+            if item not in glm_passed:
+                output.append(None)
+                continue
+
+            ai_analysis = self._ai_deep_analysis(item, source_config)
+            if ai_analysis is None:
+                output.append(None)
+                continue
+
+            # Enrich item
+            enriched_item = item.copy()
+            enriched_item["_tier"] = 2
+            enriched_item["ai_tier"] = 2
+            enriched_item["_source_config"] = source_config
+            enriched_item["ai_design_relevance"] = ai_analysis["design_relevance"]
+            enriched_item["ai_quality_score"] = ai_analysis["quality_score"]
+            enriched_item["ai_categories"] = ai_analysis["categories"]
+            enriched_item["ai_target_audience"] = ai_analysis["target_audience"]
+            enriched_item["ai_key_insights"] = ai_analysis["key_insights"]
+            output.append(enriched_item)
+
+        print(f"✅ Tier 2 batch complete: {len(items)} items → {len([x for x in output if x])} accepted")
+        return output
+
     def process_item(self, item: Dict[str, Any], source_config: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         Process a single item through the full three-stage pipeline.
+
+        NOTE: For better performance, use process_batch() for multiple items.
 
         Args:
             item: Content item with title, url, source, site_name
