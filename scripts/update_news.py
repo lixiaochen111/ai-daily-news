@@ -3042,6 +3042,23 @@ def main() -> int:
     seen_this_run: set[str] = set()
     new_items_this_run: set[str] = set()  # Track truly NEW items (not in archive before)
 
+    # CRITICAL: Limit raw_items to 50 per source BEFORE adding to archive
+    # This prevents archive explosion from thousands of fetcher items
+    from collections import defaultdict
+    raw_by_source: defaultdict[str, list[RawItem]] = defaultdict(list)
+    for raw in raw_items:
+        source_key = f"{raw.site_id}:{raw.source}"
+        raw_by_source[source_key].append(raw)
+
+    # Sort each source group by published time, take latest 50
+    limited_raw_items: list[RawItem] = []
+    for source_key, items in raw_by_source.items():
+        items.sort(key=lambda x: x.published_at or datetime.min.replace(tzinfo=UTC), reverse=True)
+        limited_raw_items.extend(items[:50])  # Max 50 per source
+
+    raw_items = limited_raw_items
+    print(f"📊 Limited raw_items to {len(raw_items)} items (50 per source)")
+
     for raw in raw_items:
         title = raw.title.strip()
         url = normalize_url(raw.url)
