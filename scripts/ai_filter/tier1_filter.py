@@ -139,6 +139,7 @@ class Tier1Filter:
                 enriched_item["ai_categories"] = ai_analysis.get("categories", [])
                 enriched_item["ai_target_audience"] = ai_analysis.get("target_audience", "")
                 enriched_item["ai_key_insights"] = ai_analysis.get("key_insights", "")
+                enriched_item["ai_recommendation"] = ai_analysis.get("recommendation", "")
 
                 return enriched_item
             else:

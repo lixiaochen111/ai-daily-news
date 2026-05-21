@@ -113,7 +113,8 @@ def _build_analysis_prompt_zh(
   "quality_score": 0-10,
   "categories": ["类别1", "类别2"],
   "target_audience": "目标读者描述",
-  "key_insights": "关键洞察摘要"
+  "key_insights": "关键洞察摘要",
+  "recommendation": "一句话推荐理由（20-30字，说明为什么推荐这篇内容）"
 }"""
 
     return prompt
@@ -156,7 +157,8 @@ Return your analysis in JSON format:
   "quality_score": 0-10,
   "categories": ["category1", "category2"],
   "target_audience": "description of target readers",
-  "key_insights": "summary of key insights"
+  "key_insights": "summary of key insights",
+  "recommendation": "one-sentence reason why this content is recommended (20-30 words in Chinese)"
 }"""
 
     return prompt

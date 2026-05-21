@@ -3040,6 +3040,7 @@ def main() -> int:
             )
 
     seen_this_run: set[str] = set()
+    new_items_this_run: set[str] = set()  # Track truly NEW items (not in archive before)
 
     for raw in raw_items:
         title = raw.title.strip()
@@ -3054,6 +3055,8 @@ def main() -> int:
 
         existing = archive.get(item_id)
         if existing is None:
+            # This is a truly NEW item - mark it for AI filtering
+            new_items_this_run.add(item_id)
             archive[item_id] = {
                 "id": item_id,
                 "site_id": raw.site_id,
@@ -3117,17 +3120,50 @@ def main() -> int:
     latest_items_all.sort(key=lambda x: event_time(x) or datetime.min.replace(tzinfo=UTC), reverse=True)
 
     # Apply AI filtering pipeline (Tier 0/1/2)
-    # IMPORTANT: Only filter NEW items (seen_this_run), not entire archive
+    # CRITICAL: Only filter TRULY NEW items (new_items_this_run = not in archive before this run)
     # This prevents re-processing thousands of old items on every run
-    new_items_to_filter = [item for item in latest_items_all if item["id"] in seen_this_run]
-    already_filtered_items = [item for item in latest_items_all if item["id"] not in seen_this_run]
+    new_items_to_filter = [item for item in latest_items_all if item["id"] in new_items_this_run]
+
+    # IMPORTANT: Limit to 50 items per source before AI processing (to control token cost)
+    # Group by source and take latest 50 from each
+    from collections import defaultdict
+    items_by_source = defaultdict(list)
+    for item in new_items_to_filter:
+        source_key = f"{item.get('site_id', 'unknown')}:{item.get('source', 'unknown')}"
+        items_by_source[source_key].append(item)
+
+    # Sort each source group by time and take top 50
+    limited_items = []
+    for source_key, items in items_by_source.items():
+        items.sort(key=lambda x: event_time(x) or datetime.min.replace(tzinfo=UTC), reverse=True)
+        limited_items.extend(items[:50])  # Max 50 per source
+
+    new_items_to_filter = limited_items
+
+    # For items already in archive: check if they passed AI filtering before
+    already_in_archive_items = [item for item in latest_items_all if item["id"] not in new_items_this_run]
 
     ai_filter = AIContentFilter()
     latest_items_before_filter = len(new_items_to_filter)
-    newly_filtered_items = ai_filter.filter_batch(new_items_to_filter) if new_items_to_filter else []
 
-    # Combine newly filtered items with previously filtered items
-    latest_items = newly_filtered_items + already_filtered_items
+    # Filter new items and mark them as filtered in archive
+    newly_filtered_items = []
+    if new_items_to_filter:
+        newly_filtered_items = ai_filter.filter_batch(new_items_to_filter)
+        # Mark these items as having been filtered
+        for item in newly_filtered_items:
+            if item["id"] in archive:
+                archive[item["id"]]["ai_filtered"] = True
+
+    # For historical archive items: only include those that have ai_filtered=True
+    # This prevents unfiltered garbage from showing up
+    filtered_archive_items = [
+        item for item in already_in_archive_items
+        if archive.get(item["id"], {}).get("ai_filtered") == True
+    ]
+
+    # Combine: newly filtered + previously filtered archive items
+    latest_items = newly_filtered_items + filtered_archive_items
     filter_stats = ai_filter.get_statistics(latest_items)
     filter_stats["items_before_filter"] = latest_items_before_filter
     filter_stats["items_after_filter"] = len(latest_items)

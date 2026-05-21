@@ -415,7 +415,8 @@ class Tier2Pipeline:
                     "quality_score": quality_score,
                     "categories": ai_analysis.get("categories", []),
                     "target_audience": ai_analysis.get("target_audience", ""),
-                    "key_insights": ai_analysis.get("key_insights", "")
+                    "key_insights": ai_analysis.get("key_insights", ""),
+                    "recommendation": ai_analysis.get("recommendation", "")
                 }
             else:
                 # Reject: low relevance and low quality
@@ -449,10 +450,13 @@ class Tier2Pipeline:
             source_config = {}
 
         # Stage 1: Keyword filter (fast, local)
+        # Limit to 100 items for free AI (GLM) processing
         keyword_passed = []
         for item in items:
             if self._keyword_filter(item, source_config):
                 keyword_passed.append(item)
+                if len(keyword_passed) >= 100:  # Max 100 for free AI
+                    break
 
         if not keyword_passed:
             return [None] * len(items)
@@ -464,14 +468,21 @@ class Tier2Pipeline:
 
         # Filter items that passed GLM
         glm_passed = []
-        for item, result in zip(keyword_passed, glm_results):
-            if result is None:
-                # GLM unavailable - degrade, pass through
-                glm_passed.append(item)
-            elif result is True:
-                # GLM accepted
-                glm_passed.append(item)
-            # If False, item is rejected
+        glm_failed_count = sum(1 for r in glm_results if r is None)
+
+        # If more than 50% failed to parse, GLM is unavailable - reject all for safety
+        if glm_failed_count > len(glm_results) * 0.5:
+            print(f"⚠️  GLM batch failed (>{glm_failed_count}/{len(glm_results)} unparseable), rejecting all Tier 2 items")
+            glm_passed = []  # Reject all instead of pass through
+        else:
+            for item, result in zip(keyword_passed, glm_results):
+                if result is None:
+                    # Individual item parse failure - reject to be safe
+                    continue
+                elif result is True:
+                    # GLM accepted
+                    glm_passed.append(item)
+                # If False, item is rejected
 
         print(f"🤖 GLM batch classification: {len(keyword_passed)} items → {len(glm_passed)} passed")
 
@@ -497,6 +508,7 @@ class Tier2Pipeline:
             enriched_item["ai_categories"] = ai_analysis["categories"]
             enriched_item["ai_target_audience"] = ai_analysis["target_audience"]
             enriched_item["ai_key_insights"] = ai_analysis["key_insights"]
+            enriched_item["ai_recommendation"] = ai_analysis.get("recommendation", "")
             output.append(enriched_item)
 
         print(f"✅ Tier 2 batch complete: {len(items)} items → {len([x for x in output if x])} accepted")
