@@ -3117,10 +3117,17 @@ def main() -> int:
     latest_items_all.sort(key=lambda x: event_time(x) or datetime.min.replace(tzinfo=UTC), reverse=True)
 
     # Apply AI filtering pipeline (Tier 0/1/2)
-    # Note: Pass ALL items to the filter, let whitelist routing handle classification
+    # IMPORTANT: Only filter NEW items (seen_this_run), not entire archive
+    # This prevents re-processing thousands of old items on every run
+    new_items_to_filter = [item for item in latest_items_all if item["id"] in seen_this_run]
+    already_filtered_items = [item for item in latest_items_all if item["id"] not in seen_this_run]
+
     ai_filter = AIContentFilter()
-    latest_items_before_filter = len(latest_items_all)  # Use raw RSS count
-    latest_items = ai_filter.filter_batch(latest_items_all)  # Pass all items
+    latest_items_before_filter = len(new_items_to_filter)
+    newly_filtered_items = ai_filter.filter_batch(new_items_to_filter) if new_items_to_filter else []
+
+    # Combine newly filtered items with previously filtered items
+    latest_items = newly_filtered_items + already_filtered_items
     filter_stats = ai_filter.get_statistics(latest_items)
     filter_stats["items_before_filter"] = latest_items_before_filter
     filter_stats["items_after_filter"] = len(latest_items)
