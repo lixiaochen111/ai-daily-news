@@ -376,26 +376,25 @@ class Tier2Pipeline:
             except json.JSONDecodeError:
                 pass
 
-            # Strategy 2: Find JSON object in response
+            # Strategy 2: Extract from first { to last }
             if not ai_analysis:
-                json_match = re.search(r'\{[^{}]*"design_relevance"[^{}]*\}', content, re.DOTALL)
+                first_brace = content.find('{')
+                last_brace = content.rfind('}')
+                if first_brace != -1 and last_brace != -1 and last_brace > first_brace:
+                    json_candidate = content[first_brace:last_brace+1]
+                    try:
+                        ai_analysis = json.loads(json_candidate)
+                    except json.JSONDecodeError:
+                        pass
+
+            # Strategy 3: Find JSON with design_relevance (support nested arrays)
+            if not ai_analysis:
+                json_match = re.search(r'\{.*?"design_relevance".*?\}', content, re.DOTALL)
                 if json_match:
                     try:
                         ai_analysis = json.loads(json_match.group(0))
                     except json.JSONDecodeError:
                         pass
-
-            # Strategy 3: Find any JSON-like block
-            if not ai_analysis:
-                json_blocks = re.findall(r'\{[^{}]+\}', content, re.DOTALL)
-                for block in reversed(json_blocks):
-                    try:
-                        test_obj = json.loads(block)
-                        if "design_relevance" in test_obj:
-                            ai_analysis = test_obj
-                            break
-                    except json.JSONDecodeError:
-                        continue
 
             if not ai_analysis:
                 print(f"⚠️  Tier 2 AI response unparseable or empty: {content[:100] if content else 'empty'}...")
