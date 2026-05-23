@@ -54,6 +54,13 @@ jobs:
 
       - name: Update data
         env:
+          # AI Filter API Keys
+          EASYROUTER_API_KEY: ${{ secrets.EASYROUTER_API_KEY }}
+          EASYROUTER_BASE_URL: ${{ vars.EASYROUTER_BASE_URL || 'https://api.easyrouter.io' }}
+          GLM_API_KEY: ${{ secrets.GLM_API_KEY }}
+          AI_MODEL_ANALYZE_ZH: ${{ vars.AI_MODEL_ANALYZE_ZH || 'deepseek-v4-pro' }}
+          AI_MODEL_ANALYZE_EN: ${{ vars.AI_MODEL_ANALYZE_EN || 'deepseek-v4-pro' }}
+          # Email & Social
           EMAIL_DIGEST_ENABLED: ${{ secrets.EMAIL_DIGEST_ENABLED || vars.EMAIL_DIGEST_ENABLED }}
           AGENTMAIL_API_KEY: ${{ secrets.AGENTMAIL_API_KEY }}
           AGENTMAIL_INBOX_ID: ${{ secrets.AGENTMAIL_INBOX_ID }}
