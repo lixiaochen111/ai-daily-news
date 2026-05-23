@@ -3044,20 +3044,28 @@ def main() -> int:
 
     # CRITICAL: Limit raw_items to 50 per source BEFORE adding to archive
     # This prevents archive explosion from thousands of fetcher items
+    print(f"🔍 Starting source limiting: {len(raw_items)} total raw items")
     from collections import defaultdict
     raw_by_source: defaultdict[str, list[RawItem]] = defaultdict(list)
-    for raw in raw_items:
-        source_key = f"{raw.site_id}:{raw.source}"
-        raw_by_source[source_key].append(raw)
 
-    # Sort each source group by published time, take latest 50
-    limited_raw_items: list[RawItem] = []
-    for source_key, items in raw_by_source.items():
-        items.sort(key=lambda x: x.published_at or datetime.min.replace(tzinfo=UTC), reverse=True)
-        limited_raw_items.extend(items[:50])  # Max 50 per source
+    try:
+        for raw in raw_items:
+            source_key = f"{raw.site_id}:{raw.source}"
+            raw_by_source[source_key].append(raw)
 
-    raw_items = limited_raw_items
-    print(f"📊 Limited raw_items to {len(raw_items)} items (50 per source)")
+        print(f"🔍 Grouped into {len(raw_by_source)} sources")
+
+        # Sort each source group by published time, take latest 50
+        limited_raw_items: list[RawItem] = []
+        for source_key, items in raw_by_source.items():
+            items.sort(key=lambda x: x.published_at or datetime.min.replace(tzinfo=UTC), reverse=True)
+            limited_raw_items.extend(items[:50])  # Max 50 per source
+
+        raw_items = limited_raw_items
+        print(f"✅ Limited raw_items to {len(raw_items)} items (50 per source)")
+    except Exception as e:
+        print(f"⚠️  Source limiting failed: {e}, proceeding with all {len(raw_items)} items")
+        # Continue with original raw_items if limiting fails
 
     for raw in raw_items:
         title = raw.title.strip()
