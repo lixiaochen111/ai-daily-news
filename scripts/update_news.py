@@ -2966,398 +2966,417 @@ def build_latest_payloads(latest_payload: dict[str, Any]) -> tuple[dict[str, Any
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Aggregate AI news updates from multiple sources")
-    parser.add_argument("--output-dir", default="data", help="Directory for output JSON files")
-    parser.add_argument("--window-hours", type=int, default=24, help="24h window size")
-    parser.add_argument("--archive-days", type=int, default=21, help="Keep archive for N days")
-    parser.add_argument("--translate-max-new", type=int, default=80, help="Max new EN->ZH title translations per run")
-    parser.add_argument("--rss-opml", default="", help="Optional OPML file path to include RSS sources")
-    parser.add_argument("--rss-max-feeds", type=int, default=0, help="Optional max OPML RSS feeds to fetch (0 means all)")
-    args = parser.parse_args()
+    try:
+        parser = argparse.ArgumentParser(description="Aggregate AI news updates from multiple sources")
+        parser.add_argument("--output-dir", default="data", help="Directory for output JSON files")
+        parser.add_argument("--window-hours", type=int, default=24, help="24h window size")
+        parser.add_argument("--archive-days", type=int, default=21, help="Keep archive for N days")
+        parser.add_argument("--translate-max-new", type=int, default=80, help="Max new EN->ZH title translations per run")
+        parser.add_argument("--rss-opml", default="", help="Optional OPML file path to include RSS sources")
+        parser.add_argument("--rss-max-feeds", type=int, default=0, help="Optional max OPML RSS feeds to fetch (0 means all)")
+        args = parser.parse_args()
 
-    now = utc_now()
-    output_dir = Path(args.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
+        now = utc_now()
+        output_dir = Path(args.output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
 
-    archive_path = output_dir / "archive.json"
-    latest_path = output_dir / "latest-24h.json"
-    latest_all_path = output_dir / "latest-24h-all.json"
-    status_path = output_dir / "source-status.json"
-    waytoagi_path = output_dir / "waytoagi-7d.json"
-    title_cache_path = output_dir / "title-zh-cache.json"
-    email_digest_path = output_dir / AGENTMAIL_DIGEST_FILE
+        archive_path = output_dir / "archive.json"
+        latest_path = output_dir / "latest-24h.json"
+        latest_all_path = output_dir / "latest-24h-all.json"
+        status_path = output_dir / "source-status.json"
+        waytoagi_path = output_dir / "waytoagi-7d.json"
+        title_cache_path = output_dir / "title-zh-cache.json"
+        email_digest_path = output_dir / AGENTMAIL_DIGEST_FILE
 
-    archive = load_archive(archive_path)
+        archive = load_archive(archive_path)
 
-    session = create_session()
-    raw_items, statuses = collect_all(session, now)
-    rss_feed_statuses: list[dict[str, Any]] = []
-    email_digest_payload, agentmail_status = maybe_fetch_agentmail_digest(
-        session,
-        generated_at=iso(now),
-        after=iso(now - timedelta(hours=args.window_hours)),
-        window_hours=args.window_hours,
-    )
-    x_api_items, x_api_status = maybe_fetch_x_api_updates(session, now)
-    if x_api_status.get("enabled"):
-        raw_items.extend(x_api_items)
-        statuses.append(
-            {
-                "site_id": "xapi",
-                "site_name": "X API",
-                "ok": bool(x_api_status.get("ok")) if x_api_status.get("ok") is not None else True,
-                "item_count": int(x_api_status.get("item_count") or 0),
-                "duration_ms": 0,
-                "error": x_api_status.get("error"),
-                "skipped": bool(x_api_status.get("skipped")),
-                "skip_reason": x_api_status.get("skip_reason"),
-            }
+        session = create_session()
+        raw_items, statuses = collect_all(session, now)
+        rss_feed_statuses: list[dict[str, Any]] = []
+        email_digest_payload, agentmail_status = maybe_fetch_agentmail_digest(
+            session,
+            generated_at=iso(now),
+            after=iso(now - timedelta(hours=args.window_hours)),
+            window_hours=args.window_hours,
         )
-
-    if args.rss_opml:
-        opml_path = Path(args.rss_opml).expanduser()
-        if opml_path.exists():
-            rss_items, rss_summary_status, rss_feed_statuses = fetch_opml_rss(
-                now,
-                opml_path,
-                max_feeds=max(0, int(args.rss_max_feeds)),
-            )
-            raw_items.extend(rss_items)
-            statuses.append(rss_summary_status)
-        else:
+        x_api_items, x_api_status = maybe_fetch_x_api_updates(session, now)
+        if x_api_status.get("enabled"):
+            raw_items.extend(x_api_items)
             statuses.append(
                 {
-                    "site_id": "opmlrss",
-                    "site_name": "OPML RSS",
-                    "ok": False,
-                    "item_count": 0,
+                    "site_id": "xapi",
+                    "site_name": "X API",
+                    "ok": bool(x_api_status.get("ok")) if x_api_status.get("ok") is not None else True,
+                    "item_count": int(x_api_status.get("item_count") or 0),
                     "duration_ms": 0,
-                    "error": f"OPML not found: {opml_path}",
-                    "feed_count": 0,
-                    "ok_feed_count": 0,
-                    "failed_feed_count": 0,
+                    "error": x_api_status.get("error"),
+                    "skipped": bool(x_api_status.get("skipped")),
+                    "skip_reason": x_api_status.get("skip_reason"),
                 }
             )
 
-    seen_this_run: set[str] = set()
-    new_items_this_run: set[str] = set()  # Track truly NEW items (not in archive before)
+        if args.rss_opml:
+            opml_path = Path(args.rss_opml).expanduser()
+            if opml_path.exists():
+                rss_items, rss_summary_status, rss_feed_statuses = fetch_opml_rss(
+                    now,
+                    opml_path,
+                    max_feeds=max(0, int(args.rss_max_feeds)),
+                )
+                raw_items.extend(rss_items)
+                statuses.append(rss_summary_status)
+            else:
+                statuses.append(
+                    {
+                        "site_id": "opmlrss",
+                        "site_name": "OPML RSS",
+                        "ok": False,
+                        "item_count": 0,
+                        "duration_ms": 0,
+                        "error": f"OPML not found: {opml_path}",
+                        "feed_count": 0,
+                        "ok_feed_count": 0,
+                        "failed_feed_count": 0,
+                    }
+                )
 
-    # CRITICAL: Limit raw_items to 50 per source BEFORE adding to archive
-    # This prevents archive explosion from thousands of fetcher items
-    print(f"🔍 Starting source limiting: {len(raw_items)} total raw items")
-    from collections import defaultdict
-    raw_by_source: defaultdict[str, list[RawItem]] = defaultdict(list)
+        seen_this_run: set[str] = set()
+        new_items_this_run: set[str] = set()  # Track truly NEW items (not in archive before)
 
-    try:
+        # CRITICAL: Limit raw_items to 50 per source BEFORE adding to archive
+        # This prevents archive explosion from thousands of fetcher items
+        print(f"🔍 Starting source limiting: {len(raw_items)} total raw items")
+        from collections import defaultdict
+        raw_by_source: defaultdict[str, list[RawItem]] = defaultdict(list)
+
+        try:
+            for raw in raw_items:
+                source_key = f"{raw.site_id}:{raw.source}"
+                raw_by_source[source_key].append(raw)
+
+            print(f"🔍 Grouped into {len(raw_by_source)} sources")
+
+            # Sort each source group by published time, take latest 50
+            limited_raw_items: list[RawItem] = []
+            for source_key, items in raw_by_source.items():
+                items.sort(key=lambda x: x.published_at or datetime.min.replace(tzinfo=UTC), reverse=True)
+                limited_raw_items.extend(items[:50])  # Max 50 per source
+
+            raw_items = limited_raw_items
+            print(f"✅ Limited raw_items to {len(raw_items)} items (50 per source)")
+        except Exception as e:
+            print(f"⚠️  Source limiting failed: {e}, proceeding with all {len(raw_items)} items")
+            # Continue with original raw_items if limiting fails
+
         for raw in raw_items:
-            source_key = f"{raw.site_id}:{raw.source}"
-            raw_by_source[source_key].append(raw)
-
-        print(f"🔍 Grouped into {len(raw_by_source)} sources")
-
-        # Sort each source group by published time, take latest 50
-        limited_raw_items: list[RawItem] = []
-        for source_key, items in raw_by_source.items():
-            items.sort(key=lambda x: x.published_at or datetime.min.replace(tzinfo=UTC), reverse=True)
-            limited_raw_items.extend(items[:50])  # Max 50 per source
-
-        raw_items = limited_raw_items
-        print(f"✅ Limited raw_items to {len(raw_items)} items (50 per source)")
-    except Exception as e:
-        print(f"⚠️  Source limiting failed: {e}, proceeding with all {len(raw_items)} items")
-        # Continue with original raw_items if limiting fails
-
-    for raw in raw_items:
-        title = raw.title.strip()
-        url = normalize_url(raw.url)
-        if not title or not url:
-            continue
-        if not url.startswith("http"):
-            continue
-
-        item_id = make_item_id(raw.site_id, raw.source, title, url)
-        seen_this_run.add(item_id)
-
-        existing = archive.get(item_id)
-        if existing is None:
-            # This is a truly NEW item - mark it for AI filtering
-            new_items_this_run.add(item_id)
-            archive[item_id] = {
-                "id": item_id,
-                "site_id": raw.site_id,
-                "site_name": raw.site_name,
-                "source": raw.source,
-                "title": title,
-                "url": url,
-                "published_at": iso(raw.published_at),
-                "first_seen_at": iso(now),
-                "last_seen_at": iso(now),
-            }
-        else:
-            existing["site_id"] = raw.site_id
-            existing["site_name"] = raw.site_name
-            existing["source"] = raw.source
-            existing["title"] = title
-            existing["url"] = url
-            if raw.published_at:
-                # OPML RSS may fix previously wrong publish times; allow overwrite.
-                if raw.site_id == "opmlrss" or not existing.get("published_at"):
-                    existing["published_at"] = iso(raw.published_at)
-            existing["last_seen_at"] = iso(now)
-
-    # Prune old archive
-    keep_after = now - timedelta(days=args.archive_days)
-    pruned: dict[str, dict[str, Any]] = {}
-    for item_id, record in archive.items():
-        ts = (
-            parse_iso(record.get("last_seen_at"))
-            or parse_iso(record.get("published_at"))
-            or parse_iso(record.get("first_seen_at"))
-            or now
-        )
-        if ts >= keep_after:
-            pruned[item_id] = record
-    archive = pruned
-
-    # 24h view
-    window_start = now - timedelta(hours=args.window_hours)
-    latest_items_all: list[dict[str, Any]] = []
-    for record in archive.values():
-        ts = event_time(record)
-        if not ts:
-            continue
-        if ts >= window_start:
-            normalized = dict(record)
-            normalized["title"] = maybe_fix_mojibake(str(normalized.get("title") or ""))
-            normalized["source"] = maybe_fix_mojibake(normalize_source_for_display(
-                str(normalized.get("site_id") or ""),
-                str(normalized.get("source") or ""),
-                str(normalized.get("url") or ""),
-            ))
-            if str(normalized.get("site_id") or "") == "aihubtoday" and is_hubtoday_placeholder_title(
-                str(normalized.get("title") or "")
-            ):
+            title = raw.title.strip()
+            url = normalize_url(raw.url)
+            if not title or not url:
                 continue
-            latest_items_all.append(normalized)
+            if not url.startswith("http"):
+                continue
 
-    latest_items_all = normalize_aihubtoday_records(latest_items_all)
+            item_id = make_item_id(raw.site_id, raw.source, title, url)
+            seen_this_run.add(item_id)
 
-    latest_items_all.sort(key=lambda x: event_time(x) or datetime.min.replace(tzinfo=UTC), reverse=True)
+            existing = archive.get(item_id)
+            if existing is None:
+                # This is a truly NEW item - mark it for AI filtering
+                new_items_this_run.add(item_id)
+                archive[item_id] = {
+                    "id": item_id,
+                    "site_id": raw.site_id,
+                    "site_name": raw.site_name,
+                    "source": raw.source,
+                    "title": title,
+                    "url": url,
+                    "published_at": iso(raw.published_at),
+                    "first_seen_at": iso(now),
+                    "last_seen_at": iso(now),
+                }
+            else:
+                existing["site_id"] = raw.site_id
+                existing["site_name"] = raw.site_name
+                existing["source"] = raw.source
+                existing["title"] = title
+                existing["url"] = url
+                if raw.published_at:
+                    # OPML RSS may fix previously wrong publish times; allow overwrite.
+                    if raw.site_id == "opmlrss" or not existing.get("published_at"):
+                        existing["published_at"] = iso(raw.published_at)
+                existing["last_seen_at"] = iso(now)
 
-    # Apply AI filtering pipeline (Tier 0/1/2)
-    # CRITICAL: Only filter TRULY NEW items (new_items_this_run = not in archive before this run)
-    # This prevents re-processing thousands of old items on every run
-    new_items_to_filter = [item for item in latest_items_all if item["id"] in new_items_this_run]
+        # Prune old archive
+        keep_after = now - timedelta(days=args.archive_days)
+        pruned: dict[str, dict[str, Any]] = {}
+        for item_id, record in archive.items():
+            ts = (
+                parse_iso(record.get("last_seen_at"))
+                or parse_iso(record.get("published_at"))
+                or parse_iso(record.get("first_seen_at"))
+                or now
+            )
+            if ts >= keep_after:
+                pruned[item_id] = record
+        archive = pruned
 
-    # IMPORTANT: Limit to 50 items per source before AI processing (to control token cost)
-    # Group by source and take latest 50 from each
-    from collections import defaultdict
-    items_by_source = defaultdict(list)
-    for item in new_items_to_filter:
-        source_key = f"{item.get('site_id', 'unknown')}:{item.get('source', 'unknown')}"
-        items_by_source[source_key].append(item)
+        # 24h view
+        window_start = now - timedelta(hours=args.window_hours)
+        latest_items_all: list[dict[str, Any]] = []
+        for record in archive.values():
+            ts = event_time(record)
+            if not ts:
+                continue
+            if ts >= window_start:
+                normalized = dict(record)
+                normalized["title"] = maybe_fix_mojibake(str(normalized.get("title") or ""))
+                normalized["source"] = maybe_fix_mojibake(normalize_source_for_display(
+                    str(normalized.get("site_id") or ""),
+                    str(normalized.get("source") or ""),
+                    str(normalized.get("url") or ""),
+                ))
+                if str(normalized.get("site_id") or "") == "aihubtoday" and is_hubtoday_placeholder_title(
+                    str(normalized.get("title") or "")
+                ):
+                    continue
+                latest_items_all.append(normalized)
 
-    # Sort each source group by time and take top 50
-    limited_items = []
-    for source_key, items in items_by_source.items():
-        items.sort(key=lambda x: event_time(x) or datetime.min.replace(tzinfo=UTC), reverse=True)
-        limited_items.extend(items[:50])  # Max 50 per source
+        latest_items_all = normalize_aihubtoday_records(latest_items_all)
 
-    new_items_to_filter = limited_items
+        latest_items_all.sort(key=lambda x: event_time(x) or datetime.min.replace(tzinfo=UTC), reverse=True)
 
-    # For items already in archive: check if they passed AI filtering before
-    already_in_archive_items = [item for item in latest_items_all if item["id"] not in new_items_this_run]
+        # Apply AI filtering pipeline (Tier 0/1/2)
+        # CRITICAL: Only filter TRULY NEW items (new_items_this_run = not in archive before this run)
+        # This prevents re-processing thousands of old items on every run
+        new_items_to_filter = [item for item in latest_items_all if item["id"] in new_items_this_run]
 
-    ai_filter = AIContentFilter()
-    latest_items_before_filter = len(new_items_to_filter)
+        # IMPORTANT: Limit to 50 items per source before AI processing (to control token cost)
+        # Group by source and take latest 50 from each
+        from collections import defaultdict
+        items_by_source = defaultdict(list)
+        for item in new_items_to_filter:
+            source_key = f"{item.get('site_id', 'unknown')}:{item.get('source', 'unknown')}"
+            items_by_source[source_key].append(item)
 
-    # Filter new items and mark them as filtered in archive
-    newly_filtered_items = []
-    if new_items_to_filter:
-        newly_filtered_items = ai_filter.filter_batch(new_items_to_filter)
-        # Mark these items as having been filtered
-        for item in newly_filtered_items:
-            if item["id"] in archive:
-                archive[item["id"]]["ai_filtered"] = True
+        # Sort each source group by time and take top 50
+        limited_items = []
+        for source_key, items in items_by_source.items():
+            items.sort(key=lambda x: event_time(x) or datetime.min.replace(tzinfo=UTC), reverse=True)
+            limited_items.extend(items[:50])  # Max 50 per source
 
-    # For historical archive items: only include those that have ai_filtered=True
-    # This prevents unfiltered garbage from showing up
-    filtered_archive_items = [
-        item for item in already_in_archive_items
-        if archive.get(item["id"], {}).get("ai_filtered") == True
-    ]
+        new_items_to_filter = limited_items
 
-    # Combine: newly filtered + previously filtered archive items
-    latest_items = newly_filtered_items + filtered_archive_items
-    filter_stats = ai_filter.get_statistics(latest_items)
-    filter_stats["items_before_filter"] = latest_items_before_filter
-    filter_stats["items_after_filter"] = len(latest_items)
-    filter_stats["filter_pass_rate"] = (
-        f"{len(latest_items) / latest_items_before_filter * 100:.1f}%"
-        if latest_items_before_filter > 0 else "N/A"
-    )
+        # For items already in archive: check if they passed AI filtering before
+        already_in_archive_items = [item for item in latest_items_all if item["id"] not in new_items_this_run]
 
-    # Add AI relevance labels AFTER filtering (for frontend display only, not for filtering)
-    for item in latest_items:
-        add_ai_relevance_fields(item)
+        ai_filter = AIContentFilter()
+        latest_items_before_filter = len(new_items_to_filter)
 
-    title_cache = load_title_zh_cache(title_cache_path)
-    latest_items, latest_items_all, title_cache = add_bilingual_fields(
-        latest_items,
-        latest_items_all,
-        session,
-        title_cache,
-        max_new_translations=max(0, args.translate_max_new),
-    )
-    latest_items_ai_dedup = dedupe_items_by_title_url(latest_items, random_pick=False)
-    latest_items_all_dedup = dedupe_items_by_title_url(latest_items_all, random_pick=True)
+        # Filter new items and mark them as filtered in archive
+        newly_filtered_items = []
+        if new_items_to_filter:
+            newly_filtered_items = ai_filter.filter_batch(new_items_to_filter)
+            # Mark these items as having been filtered
+            for item in newly_filtered_items:
+                if item["id"] in archive:
+                    archive[item["id"]]["ai_filtered"] = True
 
-    # site stats
-    site_stat: dict[str, dict[str, Any]] = {}
-    raw_count_by_site: dict[str, int] = {}
-    for record in latest_items_all:
-        sid = record["site_id"]
-        raw_count_by_site[sid] = raw_count_by_site.get(sid, 0) + 1
+        # For historical archive items: only include those that have ai_filtered=True
+        # This prevents unfiltered garbage from showing up
+        filtered_archive_items = [
+            item for item in already_in_archive_items
+            if archive.get(item["id"], {}).get("ai_filtered") == True
+        ]
 
-    site_name_by_id: dict[str, str] = {}
-    for record in latest_items_all:
-        site_name_by_id[record["site_id"]] = record["site_name"]
-    for s in statuses:
-        sid = s["site_id"]
-        if sid not in site_name_by_id:
-            site_name_by_id[sid] = s.get("site_name") or sid
+        # Combine: newly filtered + previously filtered archive items
+        latest_items = newly_filtered_items + filtered_archive_items
+        filter_stats = ai_filter.get_statistics(latest_items)
+        filter_stats["items_before_filter"] = latest_items_before_filter
+        filter_stats["items_after_filter"] = len(latest_items)
+        filter_stats["filter_pass_rate"] = (
+            f"{len(latest_items) / latest_items_before_filter * 100:.1f}%"
+            if latest_items_before_filter > 0 else "N/A"
+        )
 
-    for record in latest_items_ai_dedup:
-        sid = record["site_id"]
-        if sid not in site_stat:
+        # Add AI relevance labels AFTER filtering (for frontend display only, not for filtering)
+        for item in latest_items:
+            add_ai_relevance_fields(item)
+
+        title_cache = load_title_zh_cache(title_cache_path)
+        latest_items, latest_items_all, title_cache = add_bilingual_fields(
+            latest_items,
+            latest_items_all,
+            session,
+            title_cache,
+            max_new_translations=max(0, args.translate_max_new),
+        )
+        latest_items_ai_dedup = dedupe_items_by_title_url(latest_items, random_pick=False)
+        latest_items_all_dedup = dedupe_items_by_title_url(latest_items_all, random_pick=True)
+
+        # site stats
+        site_stat: dict[str, dict[str, Any]] = {}
+        raw_count_by_site: dict[str, int] = {}
+        for record in latest_items_all:
+            sid = record["site_id"]
+            raw_count_by_site[sid] = raw_count_by_site.get(sid, 0) + 1
+
+        site_name_by_id: dict[str, str] = {}
+        for record in latest_items_all:
+            site_name_by_id[record["site_id"]] = record["site_name"]
+        for s in statuses:
+            sid = s["site_id"]
+            if sid not in site_name_by_id:
+                site_name_by_id[sid] = s.get("site_name") or sid
+
+        for record in latest_items_ai_dedup:
+            sid = record["site_id"]
+            if sid not in site_stat:
+                site_stat[sid] = {
+                    "site_id": sid,
+                    "site_name": record["site_name"],
+                    "count": 0,
+                    "raw_count": raw_count_by_site.get(sid, 0),
+                }
+            site_stat[sid]["count"] += 1
+
+        for sid, site_name in site_name_by_id.items():
+            if sid in site_stat:
+                continue
             site_stat[sid] = {
                 "site_id": sid,
-                "site_name": record["site_name"],
+                "site_name": site_name,
                 "count": 0,
                 "raw_count": raw_count_by_site.get(sid, 0),
             }
-        site_stat[sid]["count"] += 1
 
-    for sid, site_name in site_name_by_id.items():
-        if sid in site_stat:
-            continue
-        site_stat[sid] = {
-            "site_id": sid,
-            "site_name": site_name,
-            "count": 0,
-            "raw_count": raw_count_by_site.get(sid, 0),
-        }
-
-    latest_payload = {
-        "generated_at": iso(now),
-        "window_hours": args.window_hours,
-        "total_items": len(latest_items_ai_dedup),
-        "total_items_ai_raw": len(latest_items),
-        "total_items_raw": len(latest_items_all),
-        "total_items_all_mode": len(latest_items_all_dedup),
-        "topic_filter": "ai_relevance_scoring_v0_4",
-        "ai_relevance_threshold": 0.65,
-        "ai_filter_stats": filter_stats,
-        "archive_total": len(archive),
-        "site_count": len(site_stat),
-        "source_count": len({f"{i['site_id']}::{i['source']}" for i in latest_items_ai_dedup}),
-        "site_stats": sorted(site_stat.values(), key=lambda x: x["count"], reverse=True),
-        "items": latest_items_ai_dedup,
-        "items_ai": latest_items_ai_dedup,
-        "items_all_raw": latest_items_all,
-        "items_all": latest_items_all_dedup,
-    }
-
-    archive_payload = {
-        "generated_at": iso(now),
-        "total_items": len(archive),
-        "items": sorted(
-            archive.values(),
-            key=lambda x: parse_iso(x.get("last_seen_at")) or datetime.min.replace(tzinfo=UTC),
-            reverse=True,
-        ),
-    }
-
-    status_payload = {
-        "generated_at": iso(now),
-        "sites": statuses,
-        "successful_sites": sum(1 for s in statuses if s["ok"]),
-        "failed_sites": [s["site_id"] for s in statuses if not s["ok"]],
-        "zero_item_sites": [s["site_id"] for s in statuses if s.get("ok") and int(s.get("item_count") or 0) == 0],
-        "fetched_raw_items": len(raw_items),
-        "items_before_topic_filter": len(latest_items_all),
-        "items_in_24h": len(latest_items_ai_dedup),
-        "rss_opml": {
-            "enabled": bool(args.rss_opml),
-            "path": "configured" if args.rss_opml else None,
-            "feed_total": len(rss_feed_statuses),
-            "effective_feed_total": sum(1 for s in rss_feed_statuses if not s.get("skipped")),
-            "ok_feeds": sum(1 for s in rss_feed_statuses if s["ok"] and not s.get("skipped")),
-            "failed_feeds": [s.get("effective_feed_url") or s["feed_url"] for s in rss_feed_statuses if not s["ok"]],
-            "zero_item_feeds": [
-                s.get("effective_feed_url") or s["feed_url"]
-                for s in rss_feed_statuses
-                if s["ok"] and not s.get("skipped") and int(s.get("item_count") or 0) == 0
-            ],
-            "skipped_feeds": [
-                {"feed_url": s["feed_url"], "reason": s.get("skip_reason")}
-                for s in rss_feed_statuses
-                if s.get("skipped")
-            ],
-            "replaced_feeds": [
-                {"from": s["feed_url"], "to": s.get("effective_feed_url")}
-                for s in rss_feed_statuses
-                if s.get("replaced") and s.get("effective_feed_url")
-            ],
-            "feeds": rss_feed_statuses,
-        },
-        "agentmail": agentmail_status,
-        "x_api": x_api_status,
-    }
-
-    try:
-        waytoagi_payload = fetch_waytoagi_recent_7d(session, now, WAYTOAGI_DEFAULT)
-    except Exception as exc:
-        waytoagi_payload = {
+        latest_payload = {
             "generated_at": iso(now),
-            "timezone": "Asia/Shanghai",
-            "root_url": WAYTOAGI_DEFAULT,
-            "history_url": None,
-            "window_days": 7,
-            "count_7d": 0,
-            "updates_7d": [],
-            "warning": "WaytoAGI 近7日更新抓取失败",
-            "has_error": True,
-            "error": str(exc),
+            "window_hours": args.window_hours,
+            "total_items": len(latest_items_ai_dedup),
+            "total_items_ai_raw": len(latest_items),
+            "total_items_raw": len(latest_items_all),
+            "total_items_all_mode": len(latest_items_all_dedup),
+            "topic_filter": "ai_relevance_scoring_v0_4",
+            "ai_relevance_threshold": 0.65,
+            "ai_filter_stats": filter_stats,
+            "archive_total": len(archive),
+            "site_count": len(site_stat),
+            "source_count": len({f"{i['site_id']}::{i['source']}" for i in latest_items_ai_dedup}),
+            "site_stats": sorted(site_stat.values(), key=lambda x: x["count"], reverse=True),
+            "items": latest_items_ai_dedup,
+            "items_ai": latest_items_ai_dedup,
+            "items_all_raw": latest_items_all,
+            "items_all": latest_items_all_dedup,
         }
 
-    latest_payload, latest_all_payload = build_latest_payloads(latest_payload)
+        archive_payload = {
+            "generated_at": iso(now),
+            "total_items": len(archive),
+            "items": sorted(
+                archive.values(),
+                key=lambda x: parse_iso(x.get("last_seen_at")) or datetime.min.replace(tzinfo=UTC),
+                reverse=True,
+            ),
+        }
 
-    latest_path.write_text(json.dumps(sanitize_public_payload(latest_payload), ensure_ascii=False, indent=2), encoding="utf-8")
-    latest_all_path.write_text(json.dumps(sanitize_public_payload(latest_all_payload), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    archive_path.write_text(
-        json.dumps(sanitize_public_payload(archive_payload), ensure_ascii=False, separators=(",", ":")),
-        encoding="utf-8",
-    )
-    status_path.write_text(json.dumps(sanitize_public_payload(status_payload), ensure_ascii=False, indent=2), encoding="utf-8")
-    if email_digest_payload is not None:
-        email_digest_path.write_text(
-            json.dumps(sanitize_public_payload(email_digest_payload), ensure_ascii=False, indent=2),
+        status_payload = {
+            "generated_at": iso(now),
+            "sites": statuses,
+            "successful_sites": sum(1 for s in statuses if s["ok"]),
+            "failed_sites": [s["site_id"] for s in statuses if not s["ok"]],
+            "zero_item_sites": [s["site_id"] for s in statuses if s.get("ok") and int(s.get("item_count") or 0) == 0],
+            "fetched_raw_items": len(raw_items),
+            "items_before_topic_filter": len(latest_items_all),
+            "items_in_24h": len(latest_items_ai_dedup),
+            "rss_opml": {
+                "enabled": bool(args.rss_opml),
+                "path": "configured" if args.rss_opml else None,
+                "feed_total": len(rss_feed_statuses),
+                "effective_feed_total": sum(1 for s in rss_feed_statuses if not s.get("skipped")),
+                "ok_feeds": sum(1 for s in rss_feed_statuses if s["ok"] and not s.get("skipped")),
+                "failed_feeds": [s.get("effective_feed_url") or s["feed_url"] for s in rss_feed_statuses if not s["ok"]],
+                "zero_item_feeds": [
+                    s.get("effective_feed_url") or s["feed_url"]
+                    for s in rss_feed_statuses
+                    if s["ok"] and not s.get("skipped") and int(s.get("item_count") or 0) == 0
+                ],
+                "skipped_feeds": [
+                    {"feed_url": s["feed_url"], "reason": s.get("skip_reason")}
+                    for s in rss_feed_statuses
+                    if s.get("skipped")
+                ],
+                "replaced_feeds": [
+                    {"from": s["feed_url"], "to": s.get("effective_feed_url")}
+                    for s in rss_feed_statuses
+                    if s.get("replaced") and s.get("effective_feed_url")
+                ],
+                "feeds": rss_feed_statuses,
+            },
+            "agentmail": agentmail_status,
+            "x_api": x_api_status,
+        }
+
+        try:
+            waytoagi_payload = fetch_waytoagi_recent_7d(session, now, WAYTOAGI_DEFAULT)
+        except Exception as exc:
+            waytoagi_payload = {
+                "generated_at": iso(now),
+                "timezone": "Asia/Shanghai",
+                "root_url": WAYTOAGI_DEFAULT,
+                "history_url": None,
+                "window_days": 7,
+                "count_7d": 0,
+                "updates_7d": [],
+                "warning": "WaytoAGI 近7日更新抓取失败",
+                "has_error": True,
+                "error": str(exc),
+            }
+
+        latest_payload, latest_all_payload = build_latest_payloads(latest_payload)
+
+        latest_path.write_text(json.dumps(sanitize_public_payload(latest_payload), ensure_ascii=False, indent=2), encoding="utf-8")
+        latest_all_path.write_text(json.dumps(sanitize_public_payload(latest_all_payload), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        archive_path.write_text(
+            json.dumps(sanitize_public_payload(archive_payload), ensure_ascii=False, separators=(",", ":")),
             encoding="utf-8",
         )
-    waytoagi_path.write_text(json.dumps(sanitize_public_payload(waytoagi_payload), ensure_ascii=False, indent=2), encoding="utf-8")
-    title_cache_path.write_text(json.dumps(sanitize_public_payload(title_cache), ensure_ascii=False, indent=2), encoding="utf-8")
+        status_path.write_text(json.dumps(sanitize_public_payload(status_payload), ensure_ascii=False, indent=2), encoding="utf-8")
+        if email_digest_payload is not None:
+            email_digest_path.write_text(
+                json.dumps(sanitize_public_payload(email_digest_payload), ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+        waytoagi_path.write_text(json.dumps(sanitize_public_payload(waytoagi_payload), ensure_ascii=False, indent=2), encoding="utf-8")
+        title_cache_path.write_text(json.dumps(sanitize_public_payload(title_cache), ensure_ascii=False, indent=2), encoding="utf-8")
 
-    print(f"Wrote: {latest_path} ({len(latest_items)} items)")
-    print(f"Wrote: {latest_all_path} ({len(latest_items_all_dedup)} all-mode items)")
-    print(f"Wrote: {archive_path} ({len(archive)} items)")
-    print(f"Wrote: {status_path}")
-    if email_digest_payload is not None:
-        print(f"Wrote: {email_digest_path} ({email_digest_payload.get('total_messages', 0)} email items)")
-    print(f"Wrote: {waytoagi_path} ({waytoagi_payload.get('count_7d', 0)} items)")
-    print(f"Wrote: {title_cache_path} ({len(title_cache)} entries)")
+        print(f"Wrote: {latest_path} ({len(latest_items)} items)")
+        print(f"Wrote: {latest_all_path} ({len(latest_items_all_dedup)} all-mode items)")
+        print(f"Wrote: {archive_path} ({len(archive)} items)")
+        print(f"Wrote: {status_path}")
+        if email_digest_payload is not None:
+            print(f"Wrote: {email_digest_path} ({email_digest_payload.get('total_messages', 0)} email items)")
+        print(f"Wrote: {waytoagi_path} ({waytoagi_payload.get('count_7d', 0)} items)")
+        print(f"Wrote: {title_cache_path} ({len(title_cache)} entries)")
 
-    return 0
+        return 0
+    except Exception as e:
+        import traceback
+        error_log = f"\n{'='*60}\n❌ FATAL ERROR in update_news.py\n{'='*60}\n"
+        error_log += f"Error: {type(e).__name__}: {e}\n\n"
+        error_log += "Traceback:\n"
+        error_log += traceback.format_exc()
+        error_log += f"\n{'='*60}\n"
+        print(error_log, flush=True)
+
+        # Try to write error to file for debugging
+        try:
+            with open("/tmp/update_news_error.log", "w") as f:
+                f.write(error_log)
+            print("Error log written to: /tmp/update_news_error.log")
+        except:
+            pass
+
+        return 1
 
 
 if __name__ == "__main__":
