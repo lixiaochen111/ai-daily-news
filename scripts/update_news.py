@@ -1008,6 +1008,26 @@ def fetch_bestblogs(session: requests.Session, now: datetime) -> list[RawItem]:
     return out
 
 
+TOPHUB_ALLOWED_SOURCES = {
+    "Readhub · AI",
+    "Product Hunt · 今日新产品",
+    "36氪 · 24小时热榜",
+    "GitHub · Trending Today",
+    "掘金 · 人工智能本周最热",
+    "掘金 · 全站本周最热",
+    "量子位 · 每日最新",
+    "机器之心 · 文章库",
+    "Behance · Featured Projects",
+    "UI 中国 · 推荐文章",
+    "站酷 · 作品总榜",
+    "优设网 · 每日热文榜单",
+    "IT之家 · 日榜",
+    "少数派 · 热门文章",
+    "少数派 · #应用推荐",
+    "开源中国 · 热门资讯",
+}
+
+
 def fetch_tophub(session: requests.Session, now: datetime) -> list[RawItem]:
     site_id = "tophub"
     site_name = "TopHub"
@@ -1034,6 +1054,9 @@ def fetch_tophub(session: requests.Session, now: datetime) -> list[RawItem]:
         source_name = maybe_fix_mojibake(source_name)
         board_name = maybe_fix_mojibake(board_name)
         source = f"{source_name} · {board_name}" if board_name else source_name
+
+        if source not in TOPHUB_ALLOWED_SOURCES:
+            continue
 
         for a in block.select(".cc-cd-cb-l a"):
             href = a.get("href", "").strip()
