@@ -1,91 +1,85 @@
 {
-  "generated_at": "2026-05-23T05:34:08.963180Z",
+  "generated_at": "2026-05-24T05:09:09.439340Z",
   "window_hours": 24,
-  "total_items": 0,
-  "total_items_ai_raw": 0,
-  "total_items_raw": 2990,
-  "total_items_all_mode": 2811,
+  "total_items": 1,
+  "total_items_ai_raw": 1,
+  "total_items_raw": 2100,
+  "total_items_all_mode": 2007,
   "topic_filter": "ai_relevance_scoring_v0_4",
   "ai_relevance_threshold": 0.65,
   "ai_filter_stats": {
-    "total": 0,
-    "tier_0": 0,
+    "total": 1,
+    "tier_0": 1,
     "tier_1": 0,
     "tier_2": 0,
     "blacklisted": 0,
-    "items_before_filter": 363,
-    "items_after_filter": 0,
-    "filter_pass_rate": "0.0%"
+    "items_before_filter": 1858,
+    "items_after_filter": 1,
+    "filter_pass_rate": "0.1%"
   },
-  "archive_total": 91910,
+  "archive_total": 88628,
   "site_count": 14,
-  "source_count": 0,
+  "source_count": 1,
   "site_stats": [
+    {
+      "site_id": "opmlrss",
+      "site_name": "OPML RSS",
+      "count": 1,
+      "raw_count": 1
+    },
     {
       "site_id": "newsnow",
       "site_name": "NewsNow",
       "count": 0,
-      "raw_count": 122
+      "raw_count": 76
     },
     {
       "site_id": "tophub",
       "site_name": "TopHub",
       "count": 0,
-      "raw_count": 1571
+      "raw_count": 1076
     },
     {
       "site_id": "iris",
       "site_name": "Info Flow",
       "count": 0,
-      "raw_count": 339
+      "raw_count": 269
     },
     {
       "site_id": "buzzing",
       "site_name": "Buzzing",
       "count": 0,
-      "raw_count": 615
-    },
-    {
-      "site_id": "aihot",
-      "site_name": "AI HOT",
-      "count": 0,
-      "raw_count": 35
-    },
-    {
-      "site_id": "techurls",
-      "site_name": "TechURLs",
-      "count": 0,
-      "raw_count": 222
+      "raw_count": 461
     },
     {
       "site_id": "zeli",
       "site_name": "Zeli",
       "count": 0,
-      "raw_count": 53
+      "raw_count": 50
     },
     {
-      "site_id": "official_ai",
-      "site_name": "Official AI Updates",
+      "site_id": "aihot",
+      "site_name": "AI HOT",
       "count": 0,
-      "raw_count": 5
+      "raw_count": 7
     },
     {
-      "site_id": "opmlrss",
-      "site_name": "OPML RSS",
+      "site_id": "techurls",
+      "site_name": "TechURLs",
       "count": 0,
-      "raw_count": 4
-    },
-    {
-      "site_id": "aibase",
-      "site_name": "AIbase",
-      "count": 0,
-      "raw_count": 20
+      "raw_count": 157
     },
     {
       "site_id": "followbuilders",
       "site_name": "Follow Builders",
       "count": 0,
-      "raw_count": 4
+      "raw_count": 3
+    },
+    {
+      "site_id": "official_ai",
+      "site_name": "Official AI Updates",
+      "count": 0,
+      "raw_count": 0
     },
     {
       "site_id": "aibreakfast",
@@ -104,9 +98,77 @@
       "site_name": "AI HubToday",
       "count": 0,
       "raw_count": 0
+    },
+    {
+      "site_id": "aibase",
+      "site_name": "AIbase",
+      "count": 0,
+      "raw_count": 0
     }
   ],
-  "items": [],
-  "items_ai": [],
+  "items": [
+    {
+      "id": "5b111dc19ffea1e8dda3241196674bfff5823f05",
+      "site_id": "opmlrss",
+      "site_name": "OPML RSS",
+      "source": "UX Collective - Medium",
+      "title": "Designing how designers master AI",
+      "url": "https://uxdesign.cc/designing-how-designers-master-ai-642d8751d945?source=rss----138adf9c44c---4",
+      "published_at": "2026-05-23T20:42:12Z",
+      "first_seen_at": "2026-05-24T05:09:09.439340Z",
+      "last_seen_at": "2026-05-24T05:09:09.439340Z",
+      "_tier": 0,
+      "_source_config": {
+        "id": "ux_collective",
+        "name": "UX Collective",
+        "patterns": [
+          "uxdesign.cc",
+          "UX Collective"
+        ],
+        "reason": "Medium最大UX设计专栏，编辑质量控制严格",
+        "update_frequency": "daily",
+        "expected_items_per_day": 3,
+        "language": "en"
+      },
+      "ai_tier": 0,
+      "ai_must_publish": true,
+      "title_original": "Designing how designers master AI",
+      "title_en": "Designing how designers master AI",
+      "title_zh": "设计设计师如何掌握人工智能",
+      "title_bilingual": "设计设计师如何掌握人工智能 / Designing how designers master AI"
+    }
+  ],
+  "items_ai": [
+    {
+      "id": "5b111dc19ffea1e8dda3241196674bfff5823f05",
+      "site_id": "opmlrss",
+      "site_name": "OPML RSS",
+      "source": "UX Collective - Medium",
+      "title": "Designing how designers master AI",
+      "url": "https://uxdesign.cc/designing-how-designers-master-ai-642d8751d945?source=rss----138adf9c44c---4",
+      "published_at": "2026-05-23T20:42:12Z",
+      "first_seen_at": "2026-05-24T05:09:09.439340Z",
+      "last_seen_at": "2026-05-24T05:09:09.439340Z",
+      "_tier": 0,
+      "_source_config": {
+        "id": "ux_collective",
+        "name": "UX Collective",
+        "patterns": [
+          "uxdesign.cc",
+          "UX Collective"
+        ],
+        "reason": "Medium最大UX设计专栏，编辑质量控制严格",
+        "update_frequency": "daily",
+        "expected_items_per_day": 3,
+        "language": "en"
+      },
+      "ai_tier": 0,
+      "ai_must_publish": true,
+      "title_original": "Designing how designers master AI",
+      "title_en": "Designing how designers master AI",
+      "title_zh": "设计设计师如何掌握人工智能",
+      "title_bilingual": "设计设计师如何掌握人工智能 / Designing how designers master AI"
+    }
+  ],
   "all_mode_data_url": "data/latest-24h-all.json"
 }
