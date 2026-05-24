@@ -5,23 +5,6 @@
     <dateCreated>2026-05-16</dateCreated>
   </head>
   <body>
-    <outline text="X/Twitter Feeds (via RSS.app)">
-      <outline
-        text="Jakub Antalik"
-        title="Lead Product Designer"
-        type="rss"
-        xmlUrl="https://rss.app/feeds/W7e4bnxUpEIclzYD.xml"
-        htmlUrl="https://x.com/Jakubantalik"
-      />
-      <outline
-        text="Praveen Kumar"
-        title="Designer &amp; Branding"
-        type="rss"
-        xmlUrl="https://rss.app/feeds/y6bvnECMbtrjgHpM.xml"
-        htmlUrl="https://x.com/praveenisomer"
-      />
-    </outline>
-
     <outline text="Official AI Blogs">
       <outline
         text="Google AI Blog"
