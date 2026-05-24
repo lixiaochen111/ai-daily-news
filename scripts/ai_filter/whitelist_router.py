@@ -51,12 +51,13 @@ class WhitelistRouter:
             - source_config: 匹配到的源配置字典，未匹配或黑名单时为None
         """
         # 提取字段并转小写用于不区分大小写匹配
+        site_id = item.get("site_id", "").lower()
         source = item.get("source", "").lower()
         url = item.get("url", "").lower()
         title = item.get("title", "").lower()
 
-        # 组合所有字段用于模式匹配
-        combined = f"{source} {url} {title}"
+        # 组合所有字段用于模式匹配（包括site_id）
+        combined = f"{site_id} {source} {url} {title}"
 
         # 1. 检查黑名单（最高优先级）
         for blacklist_item in self.blacklist_sources:
