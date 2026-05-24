@@ -58,6 +58,27 @@
         xmlUrl="https://huggingface.co/blog/feed.xml"
         htmlUrl="https://huggingface.co/blog/"
       />
+      <outline
+        text="Anthropic News"
+        title="Anthropic News"
+        type="rss"
+        xmlUrl="https://www.anthropic.com/rss.xml"
+        htmlUrl="https://www.anthropic.com/news"
+      />
+      <outline
+        text="GitHub AI &amp; ML"
+        title="GitHub AI and ML"
+        type="rss"
+        xmlUrl="https://github.blog/ai-and-ml/feed/"
+        htmlUrl="https://github.blog/ai-and-ml/"
+      />
+      <outline
+        text="GitHub Changelog"
+        title="GitHub Changelog"
+        type="rss"
+        xmlUrl="https://github.blog/changelog/feed/"
+        htmlUrl="https://github.blog/changelog/"
+      />
     </outline>
 
     <outline text="Design Sources (Tier 0)">

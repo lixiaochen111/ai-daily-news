@@ -1875,7 +1875,8 @@ def fetch_newsnow(session: requests.Session, now: datetime) -> list[RawItem]:
 
 def collect_all(session: requests.Session, now: datetime) -> tuple[list[RawItem], list[dict[str, Any]]]:
     tasks = [
-        ("official_ai", "Official AI Updates", fetch_official_ai_updates),
+        # official_ai removed: fully covered by OPML RSS (follow.opml)
+        # Anthropic News and OpenAI Codex Changelog moved to OPML or can be re-added later
         ("aibreakfast", "AI Breakfast", fetch_ai_breakfast),
         ("followbuilders", "Follow Builders", fetch_follow_builders),
         ("techurls", "TechURLs", fetch_techurls),
@@ -1883,7 +1884,7 @@ def collect_all(session: requests.Session, now: datetime) -> tuple[list[RawItem]
         ("iris", "Info Flow", fetch_iris),
         ("bestblogs", "BestBlogs", fetch_bestblogs),
         ("tophub", "TopHub", fetch_tophub),
-        ("zeli", "Zeli", fetch_zeli),
+        # zeli removed: 80%+ overlap with techurls/iris/buzzing
         ("aihubtoday", "AI HubToday", fetch_ai_hubtoday),
         ("aibase", "AIbase", fetch_aibase),
         ("aihot", "AI HOT", fetch_aihot),
