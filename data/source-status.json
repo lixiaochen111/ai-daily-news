@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-05-24T05:09:09.439340Z",
+  "generated_at": "2026-05-24T05:20:50.166035Z",
   "sites": [
     {
       "site_id": "official_ai",
       "site_name": "Official AI Updates",
       "ok": true,
       "item_count": 227,
-      "duration_ms": 7762,
+      "duration_ms": 4653,
       "error": null
     },
     {
@@ -14,7 +14,7 @@
       "site_name": "AI Breakfast",
       "ok": true,
       "item_count": 9,
-      "duration_ms": 376,
+      "duration_ms": 235,
       "error": null
     },
     {
@@ -22,7 +22,7 @@
       "site_name": "Follow Builders",
       "ok": true,
       "item_count": 25,
-      "duration_ms": 24,
+      "duration_ms": 67,
       "error": null
     },
     {
@@ -30,7 +30,7 @@
       "site_name": "TechURLs",
       "ok": true,
       "item_count": 405,
-      "duration_ms": 453,
+      "duration_ms": 458,
       "error": null
     },
     {
@@ -38,15 +38,15 @@
       "site_name": "Buzzing",
       "ok": true,
       "item_count": 744,
-      "duration_ms": 284,
+      "duration_ms": 375,
       "error": null
     },
     {
       "site_id": "iris",
       "site_name": "Info Flow",
       "ok": true,
-      "item_count": 391,
-      "duration_ms": 12642,
+      "item_count": 392,
+      "duration_ms": 11636,
       "error": null
     },
     {
@@ -54,15 +54,15 @@
       "site_name": "BestBlogs",
       "ok": true,
       "item_count": 1,
-      "duration_ms": 1447,
+      "duration_ms": 1083,
       "error": null
     },
     {
       "site_id": "tophub",
       "site_name": "TopHub",
       "ok": true,
-      "item_count": 3022,
-      "duration_ms": 1821,
+      "item_count": 3025,
+      "duration_ms": 1817,
       "error": null
     },
     {
@@ -70,7 +70,7 @@
       "site_name": "Zeli",
       "ok": true,
       "item_count": 56,
-      "duration_ms": 441,
+      "duration_ms": 538,
       "error": null
     },
     {
@@ -78,7 +78,7 @@
       "site_name": "AI HubToday",
       "ok": true,
       "item_count": 10,
-      "duration_ms": 237,
+      "duration_ms": 239,
       "error": null
     },
     {
@@ -86,7 +86,7 @@
       "site_name": "AIbase",
       "ok": true,
       "item_count": 20,
-      "duration_ms": 1333,
+      "duration_ms": 8782,
       "error": null
     },
     {
@@ -94,7 +94,7 @@
       "site_name": "AI HOT",
       "ok": true,
       "item_count": 50,
-      "duration_ms": 2391,
+      "duration_ms": 1637,
       "error": null
     },
     {
@@ -102,7 +102,7 @@
       "site_name": "NewsNow",
       "ok": true,
       "item_count": 146,
-      "duration_ms": 461,
+      "duration_ms": 392,
       "error": null
     },
     {
@@ -111,7 +111,7 @@
       "ok": true,
       "partial_failures": 2,
       "item_count": 230,
-      "duration_ms": 3714,
+      "duration_ms": 3692,
       "error": "2 feeds failed",
       "feed_count": 10,
       "effective_feed_count": 10,
@@ -125,8 +125,8 @@
   "failed_sites": [],
   "zero_item_sites": [],
   "fetched_raw_items": 4397,
-  "items_before_topic_filter": 2100,
-  "items_in_24h": 1,
+  "items_before_topic_filter": 2246,
+  "items_in_24h": 3,
   "rss_opml": {
     "enabled": true,
     "path": "configured",
@@ -149,7 +149,7 @@
         "effective_feed_url": "https://www.awwwards.com/blog/feed/",
         "ok": true,
         "item_count": 30,
-        "duration_ms": 561,
+        "duration_ms": 673,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -164,7 +164,7 @@
         "effective_feed_url": "https://tympanus.net/codrops/feed/",
         "ok": true,
         "item_count": 10,
-        "duration_ms": 692,
+        "duration_ms": 798,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -179,7 +179,7 @@
         "effective_feed_url": "https://rss.app/feeds/y6bvnECMbtrjgHpM.xml",
         "ok": false,
         "item_count": 0,
-        "duration_ms": 357,
+        "duration_ms": 163,
         "error": "402 Client Error: Payment Required for url: https://rss.app/feeds/y6bvnECMbtrjgHpM.xml",
         "skipped": false,
         "skip_reason": null,
@@ -194,7 +194,7 @@
         "effective_feed_url": "https://blog.google/technology/ai/rss/",
         "ok": true,
         "item_count": 20,
-        "duration_ms": 236,
+        "duration_ms": 177,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -209,7 +209,7 @@
         "effective_feed_url": "https://deepmind.google/blog/rss.xml",
         "ok": true,
         "item_count": 50,
-        "duration_ms": 277,
+        "duration_ms": 288,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -224,7 +224,7 @@
         "effective_feed_url": "https://huggingface.co/blog/feed.xml",
         "ok": true,
         "item_count": 50,
-        "duration_ms": 236,
+        "duration_ms": 246,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -239,7 +239,7 @@
         "effective_feed_url": "https://rss.app/feeds/W7e4bnxUpEIclzYD.xml",
         "ok": false,
         "item_count": 0,
-        "duration_ms": 281,
+        "duration_ms": 170,
         "error": "402 Client Error: Payment Required for url: https://rss.app/feeds/W7e4bnxUpEIclzYD.xml",
         "skipped": false,
         "skip_reason": null,
@@ -254,7 +254,7 @@
         "effective_feed_url": "https://blogs.microsoft.com/ai/feed/",
         "ok": true,
         "item_count": 10,
-        "duration_ms": 140,
+        "duration_ms": 208,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -269,7 +269,7 @@
         "effective_feed_url": "https://openai.com/news/rss.xml",
         "ok": true,
         "item_count": 50,
-        "duration_ms": 621,
+        "duration_ms": 647,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -284,7 +284,7 @@
         "effective_feed_url": "https://uxdesign.cc/feed",
         "ok": true,
         "item_count": 10,
-        "duration_ms": 313,
+        "duration_ms": 322,
         "error": null,
         "skipped": false,
         "skip_reason": null,
