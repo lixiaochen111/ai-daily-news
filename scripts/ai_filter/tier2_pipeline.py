@@ -55,7 +55,7 @@ class Tier2Pipeline:
         self.easyrouter_client = EasyRouterClient()
 
         # Model configuration from environment variables
-        self.model_classify = os.getenv("AI_MODEL_CLASSIFY", "glm-4.7-flash")
+        self.model_classify = os.getenv("AI_MODEL_CLASSIFY", "glm-4-flash")
         self.model_zh = os.getenv("AI_MODEL_ANALYZE_ZH", "deepseek-v4-pro")
         self.model_en = os.getenv("AI_MODEL_ANALYZE_EN", "deepseek-v4-pro")
 

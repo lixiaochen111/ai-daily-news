@@ -59,5 +59,67 @@
         htmlUrl="https://huggingface.co/blog/"
       />
     </outline>
+
+    <outline text="Design Sources (Tier 0)">
+      <outline
+        text="UX Collective"
+        title="UX Collective - Medium"
+        type="rss"
+        xmlUrl="https://uxdesign.cc/feed"
+        htmlUrl="https://uxdesign.cc/"
+      />
+      <outline
+        text="Codrops"
+        title="Codrops"
+        type="rss"
+        xmlUrl="https://tympanus.net/codrops/feed/"
+        htmlUrl="https://tympanus.net/codrops/"
+      />
+      <outline
+        text="Awwwards"
+        title="Awwwards"
+        type="rss"
+        xmlUrl="https://www.awwwards.com/blog/feed/"
+        htmlUrl="https://www.awwwards.com/"
+      />
+      <outline
+        text="Sidebar"
+        title="Sidebar - Daily Design Links"
+        type="rss"
+        xmlUrl="https://sidebar.io/feed.xml"
+        htmlUrl="https://sidebar.io/"
+      />
+      <outline
+        text="Webdesigner News"
+        title="Webdesigner News"
+        type="rss"
+        xmlUrl="https://www.webdesignernews.com/feed"
+        htmlUrl="https://www.webdesignernews.com/"
+      />
+    </outline>
+
+    <outline text="Tech Media (Tier 1)">
+      <outline
+        text="The Verge - AI"
+        title="The Verge AI"
+        type="rss"
+        xmlUrl="https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
+        htmlUrl="https://www.theverge.com/ai-artificial-intelligence"
+      />
+      <outline
+        text="TechCrunch - AI"
+        title="TechCrunch AI"
+        type="rss"
+        xmlUrl="https://techcrunch.com/category/artificial-intelligence/feed/"
+        htmlUrl="https://techcrunch.com/category/artificial-intelligence/"
+      />
+      <outline
+        text="Wired - AI"
+        title="Wired AI"
+        type="rss"
+        xmlUrl="https://www.wired.com/feed/tag/ai/latest/rss"
+        htmlUrl="https://www.wired.com/tag/ai/"
+      />
+    </outline>
   </body>
 </opml>

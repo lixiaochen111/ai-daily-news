@@ -95,7 +95,7 @@ class GLMClient:
 
     def call_model(
         self,
-        model="glm-4.7-flash",
+        model="glm-4-flash",
         system_prompt="",
         user_prompt="",
         temperature=0.7,

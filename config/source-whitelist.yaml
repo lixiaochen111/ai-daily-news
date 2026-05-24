@@ -330,6 +330,102 @@ tier_2_sources:
     max_items_per_day: 4
 
 
+  # 聚合源（占archive 91%的内容，需严格筛选AI+设计相关）
+  - id: tophub
+    name: "TopHub"
+    patterns:
+      - "tophub"
+    reason: "综合热榜聚合，内容极广，需严格筛选AI/设计相关"
+    update_frequency: "hourly"
+    expected_items_per_day: 5
+    language: "zh"
+    filter_focus:
+      - "AI产品发布"
+      - "设计工具"
+      - "AI应用"
+      - "开发者工具"
+    exclude_topics:
+      - "娱乐"
+      - "体育"
+      - "政治"
+      - "社会新闻"
+      - "金融股市"
+    max_items_per_day: 8
+
+  - id: buzzing
+    name: "Buzzing"
+    patterns:
+      - "buzzing"
+    reason: "多平台热门聚合，英文科技内容为主"
+    update_frequency: "hourly"
+    expected_items_per_day: 5
+    language: "en"
+    filter_focus:
+      - "AI模型"
+      - "设计工具"
+      - "开发者工具"
+      - "创意应用"
+    exclude_topics:
+      - "政治"
+      - "体育"
+      - "游戏"
+      - "加密货币"
+    max_items_per_day: 8
+
+  - id: techurls
+    name: "TechURLs"
+    patterns:
+      - "techurls"
+    reason: "技术链接聚合，Reddit/HN等来源"
+    update_frequency: "hourly"
+    expected_items_per_day: 3
+    language: "en"
+    filter_focus:
+      - "AI工具"
+      - "设计系统"
+      - "前端技术"
+      - "开发体验"
+    exclude_topics:
+      - "纯硬件"
+      - "系统管理"
+      - "网络安全漏洞"
+    max_items_per_day: 5
+
+  - id: iris
+    name: "Iris"
+    patterns:
+      - "iris"
+    reason: "科技资讯聚合，需筛选AI+设计相关"
+    update_frequency: "daily"
+    expected_items_per_day: 3
+    language: "zh"
+    filter_focus:
+      - "AI应用"
+      - "设计趋势"
+      - "产品发布"
+    exclude_topics:
+      - "纯商业"
+      - "行业八卦"
+    max_items_per_day: 5
+
+  - id: newsnow
+    name: "NewsNow"
+    patterns:
+      - "newsnow"
+    reason: "新闻聚合，范围广"
+    update_frequency: "hourly"
+    expected_items_per_day: 2
+    language: "en"
+    filter_focus:
+      - "AI技术"
+      - "设计创新"
+    exclude_topics:
+      - "政治"
+      - "体育"
+      - "娱乐"
+    max_items_per_day: 4
+
+
 # ==================== 黑名单 ====================
 blacklist_sources:
   - id: entertainment
@@ -373,10 +469,10 @@ blacklist_sources:
 
 # ==================== 配置元数据 ====================
 metadata:
-  total_sources: 17
+  total_sources: 22
   tier_0_count: 8
-  tier_1_count: 2
-  tier_2_count: 6
+  tier_1_count: 5
+  tier_2_count: 11
 
   tier_distribution:
     tier_0:
