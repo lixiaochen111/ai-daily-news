@@ -1880,7 +1880,7 @@ def collect_all(session: requests.Session, now: datetime) -> tuple[list[RawItem]
         ("aibreakfast", "AI Breakfast", fetch_ai_breakfast),
         ("followbuilders", "Follow Builders", fetch_follow_builders),
         ("techurls", "TechURLs", fetch_techurls),
-        ("buzzing", "Buzzing", fetch_buzzing),
+        # buzzing removed: 64% finance/news, only 9% AI-relevant
         ("iris", "Info Flow", fetch_iris),
         ("bestblogs", "BestBlogs", fetch_bestblogs),
         ("tophub", "TopHub", fetch_tophub),
