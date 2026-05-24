@@ -56,7 +56,7 @@ jobs:
         env:
           # AI Filter API Keys
           EASYROUTER_API_KEY: ${{ secrets.EASYROUTER_API_KEY }}
-          EASYROUTER_BASE_URL: ${{ vars.EASYROUTER_BASE_URL || 'https://api.easyrouter.io' }}
+          EASYROUTER_BASE_URL: ${{ vars.EASYROUTER_BASE_URL || 'https://easyrouter.io/v1' }}
           GLM_API_KEY: ${{ secrets.GLM_API_KEY }}
           AI_MODEL_ANALYZE_ZH: ${{ vars.AI_MODEL_ANALYZE_ZH || 'deepseek-v4-pro' }}
           AI_MODEL_ANALYZE_EN: ${{ vars.AI_MODEL_ANALYZE_EN || 'deepseek-v4-pro' }}
