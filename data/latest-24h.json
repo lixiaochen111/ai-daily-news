@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-05-24T05:55:07.991475Z",
+  "generated_at": "2026-05-24T06:00:52.165515Z",
   "window_hours": 24,
   "total_items": 5,
   "total_items_ai_raw": 5,
-  "total_items_raw": 2027,
-  "total_items_all_mode": 1939,
+  "total_items_raw": 2031,
+  "total_items_all_mode": 1943,
   "topic_filter": "ai_relevance_scoring_v0_4",
   "ai_relevance_threshold": 0.65,
   "ai_filter_stats": {
@@ -13,25 +13,25 @@
     "tier_1": 1,
     "tier_2": 3,
     "blacklisted": 0,
-    "items_before_filter": 26,
+    "items_before_filter": 5,
     "items_after_filter": 5,
-    "filter_pass_rate": "19.2%"
+    "filter_pass_rate": "100.0%"
   },
-  "archive_total": 88648,
-  "site_count": 13,
+  "archive_total": 88654,
+  "site_count": 11,
   "source_count": 4,
   "site_stats": [
     {
       "site_id": "tophub",
       "site_name": "TopHub",
       "count": 2,
-      "raw_count": 998
+      "raw_count": 999
     },
     {
       "site_id": "iris",
       "site_name": "Info Flow",
       "count": 2,
-      "raw_count": 276
+      "raw_count": 280
     },
     {
       "site_id": "opmlrss",
@@ -55,7 +55,7 @@
       "site_id": "buzzing",
       "site_name": "Buzzing",
       "count": 0,
-      "raw_count": 453
+      "raw_count": 452
     },
     {
       "site_id": "zeli",
@@ -74,18 +74,6 @@
       "site_name": "Follow Builders",
       "count": 0,
       "raw_count": 1
-    },
-    {
-      "site_id": "aibreakfast",
-      "site_name": "AI Breakfast",
-      "count": 0,
-      "raw_count": 0
-    },
-    {
-      "site_id": "bestblogs",
-      "site_name": "BestBlogs",
-      "count": 0,
-      "raw_count": 0
     },
     {
       "site_id": "aihubtoday",
@@ -110,44 +98,8 @@
       "url": "https://hub.baai.ac.cn/view/54939",
       "published_at": null,
       "first_seen_at": "2026-05-24T05:55:07.991475Z",
-      "last_seen_at": "2026-05-24T05:55:07.991475Z",
-      "_tier": 2,
-      "ai_tier": 2,
-      "_source_config": {
-        "id": "tophub",
-        "name": "TopHub",
-        "patterns": [
-          "tophub"
-        ],
-        "reason": "综合热榜聚合，内容极广，需严格筛选AI/设计相关",
-        "update_frequency": "hourly",
-        "expected_items_per_day": 5,
-        "language": "zh",
-        "filter_focus": [
-          "AI产品发布",
-          "设计工具",
-          "AI应用",
-          "开发者工具"
-        ],
-        "exclude_topics": [
-          "娱乐",
-          "体育",
-          "政治",
-          "社会新闻",
-          "金融股市"
-        ],
-        "max_items_per_day": 8
-      },
-      "ai_design_relevance": 0.4,
-      "ai_quality_score": 7,
-      "ai_categories": [
-        "AI应用",
-        "多模态AI",
-        "学术综述"
-      ],
-      "ai_target_audience": "关注多模态大模型进展的AI研究员、算法工程师及技术决策者",
-      "ai_key_insights": "系统梳理大模型时代音频-视觉智能（AVI）的核心方法、关键任务与现存挑战，为跨模态理解与生成提供全局视角。",
-      "ai_recommendation": "对多模态人机交互的前沿趋势有全景式总结，适合为下一代智能体验设计储备技术认知。",
+      "last_seen_at": "2026-05-24T06:00:52.165515Z",
+      "ai_filtered": true,
       "title_original": "首个「音频-视觉智能」综述：大模型时代的 AVI，究竟走到哪一步了？",
       "title_en": null,
       "title_zh": "首个「音频-视觉智能」综述：大模型时代的 AVI，究竟走到哪一步了？",
@@ -162,40 +114,8 @@
       "url": "https://www.v2ex.com/t/1215058",
       "published_at": "2026-05-24T05:45:03Z",
       "first_seen_at": "2026-05-24T05:55:07.991475Z",
-      "last_seen_at": "2026-05-24T05:55:07.991475Z",
-      "_tier": 2,
-      "ai_tier": 2,
-      "_source_config": {
-        "id": "iris",
-        "name": "Iris",
-        "patterns": [
-          "iris"
-        ],
-        "reason": "科技资讯聚合，需筛选AI+设计相关",
-        "update_frequency": "daily",
-        "expected_items_per_day": 3,
-        "language": "zh",
-        "filter_focus": [
-          "AI应用",
-          "设计趋势",
-          "产品发布"
-        ],
-        "exclude_topics": [
-          "纯商业",
-          "行业八卦"
-        ],
-        "max_items_per_day": 5
-      },
-      "ai_design_relevance": 0.8,
-      "ai_quality_score": 6,
-      "ai_categories": [
-        "AI设计工具",
-        "生成式UI",
-        "面试工具"
-      ],
-      "ai_target_audience": "UI/UX设计师、前端开发者、对AI辅助设计感兴趣的产品经理",
-      "ai_key_insights": "利用Claude的生成能力快速构建TCG风格面试官工具，展示了AI在设计探索和交互原型中的潜力，风格化界面降低了创意验证的时间成本。",
-      "ai_recommendation": "用Claude动手验证TCG风格面试界面的创意，启发设计师尝试AI驱动的风格化原型快建。",
+      "last_seen_at": "2026-05-24T06:00:52.165515Z",
+      "ai_filtered": true,
       "title_original": "[分享创造] 试了下 Claude Design 的能力, 顺手做了个 TCG 风的面试官工具",
       "title_en": null,
       "title_zh": "[分享创造] 试了下 Claude Design 的能力, 顺手做了个 TCG 风的面试官工具",
@@ -210,7 +130,7 @@
       "url": "https://36kr.com/newsflashes/3822775103607172?f=rss",
       "published_at": null,
       "first_seen_at": "2026-05-24T05:20:50.166035Z",
-      "last_seen_at": "2026-05-24T05:55:07.991475Z",
+      "last_seen_at": "2026-05-24T06:00:52.165515Z",
       "ai_filtered": true,
       "title_original": "一季度 AI 领域融资超 1100 亿元 国产大模型融资金额暴增",
       "title_en": null,
@@ -226,7 +146,7 @@
       "url": "https://www.theverge.com/tech/931532/bambu-agpl-pawel-jarczak-open-source-threat-dmca-github",
       "published_at": "2026-05-24T04:22:39Z",
       "first_seen_at": "2026-05-24T05:20:50.166035Z",
-      "last_seen_at": "2026-05-24T05:55:07.991475Z",
+      "last_seen_at": "2026-05-24T06:00:52.165515Z",
       "ai_filtered": true,
       "title_original": "'Fuck you, Bambu': How one private message could change the face of 3D printing",
       "title_en": "'Fuck you, Bambu': How one private message could change the face of 3D printing",
@@ -242,7 +162,7 @@
       "url": "https://uxdesign.cc/designing-how-designers-master-ai-642d8751d945?source=rss----138adf9c44c---4",
       "published_at": "2026-05-23T20:42:12Z",
       "first_seen_at": "2026-05-24T05:09:09.439340Z",
-      "last_seen_at": "2026-05-24T05:20:50.166035Z",
+      "last_seen_at": "2026-05-24T06:00:52.165515Z",
       "ai_filtered": true,
       "title_original": "Designing how designers master AI",
       "title_en": "Designing how designers master AI",
@@ -260,44 +180,8 @@
       "url": "https://hub.baai.ac.cn/view/54939",
       "published_at": null,
       "first_seen_at": "2026-05-24T05:55:07.991475Z",
-      "last_seen_at": "2026-05-24T05:55:07.991475Z",
-      "_tier": 2,
-      "ai_tier": 2,
-      "_source_config": {
-        "id": "tophub",
-        "name": "TopHub",
-        "patterns": [
-          "tophub"
-        ],
-        "reason": "综合热榜聚合，内容极广，需严格筛选AI/设计相关",
-        "update_frequency": "hourly",
-        "expected_items_per_day": 5,
-        "language": "zh",
-        "filter_focus": [
-          "AI产品发布",
-          "设计工具",
-          "AI应用",
-          "开发者工具"
-        ],
-        "exclude_topics": [
-          "娱乐",
-          "体育",
-          "政治",
-          "社会新闻",
-          "金融股市"
-        ],
-        "max_items_per_day": 8
-      },
-      "ai_design_relevance": 0.4,
-      "ai_quality_score": 7,
-      "ai_categories": [
-        "AI应用",
-        "多模态AI",
-        "学术综述"
-      ],
-      "ai_target_audience": "关注多模态大模型进展的AI研究员、算法工程师及技术决策者",
-      "ai_key_insights": "系统梳理大模型时代音频-视觉智能（AVI）的核心方法、关键任务与现存挑战，为跨模态理解与生成提供全局视角。",
-      "ai_recommendation": "对多模态人机交互的前沿趋势有全景式总结，适合为下一代智能体验设计储备技术认知。",
+      "last_seen_at": "2026-05-24T06:00:52.165515Z",
+      "ai_filtered": true,
       "title_original": "首个「音频-视觉智能」综述：大模型时代的 AVI，究竟走到哪一步了？",
       "title_en": null,
       "title_zh": "首个「音频-视觉智能」综述：大模型时代的 AVI，究竟走到哪一步了？",
@@ -312,40 +196,8 @@
       "url": "https://www.v2ex.com/t/1215058",
       "published_at": "2026-05-24T05:45:03Z",
       "first_seen_at": "2026-05-24T05:55:07.991475Z",
-      "last_seen_at": "2026-05-24T05:55:07.991475Z",
-      "_tier": 2,
-      "ai_tier": 2,
-      "_source_config": {
-        "id": "iris",
-        "name": "Iris",
-        "patterns": [
-          "iris"
-        ],
-        "reason": "科技资讯聚合，需筛选AI+设计相关",
-        "update_frequency": "daily",
-        "expected_items_per_day": 3,
-        "language": "zh",
-        "filter_focus": [
-          "AI应用",
-          "设计趋势",
-          "产品发布"
-        ],
-        "exclude_topics": [
-          "纯商业",
-          "行业八卦"
-        ],
-        "max_items_per_day": 5
-      },
-      "ai_design_relevance": 0.8,
-      "ai_quality_score": 6,
-      "ai_categories": [
-        "AI设计工具",
-        "生成式UI",
-        "面试工具"
-      ],
-      "ai_target_audience": "UI/UX设计师、前端开发者、对AI辅助设计感兴趣的产品经理",
-      "ai_key_insights": "利用Claude的生成能力快速构建TCG风格面试官工具，展示了AI在设计探索和交互原型中的潜力，风格化界面降低了创意验证的时间成本。",
-      "ai_recommendation": "用Claude动手验证TCG风格面试界面的创意，启发设计师尝试AI驱动的风格化原型快建。",
+      "last_seen_at": "2026-05-24T06:00:52.165515Z",
+      "ai_filtered": true,
       "title_original": "[分享创造] 试了下 Claude Design 的能力, 顺手做了个 TCG 风的面试官工具",
       "title_en": null,
       "title_zh": "[分享创造] 试了下 Claude Design 的能力, 顺手做了个 TCG 风的面试官工具",
@@ -360,7 +212,7 @@
       "url": "https://36kr.com/newsflashes/3822775103607172?f=rss",
       "published_at": null,
       "first_seen_at": "2026-05-24T05:20:50.166035Z",
-      "last_seen_at": "2026-05-24T05:55:07.991475Z",
+      "last_seen_at": "2026-05-24T06:00:52.165515Z",
       "ai_filtered": true,
       "title_original": "一季度 AI 领域融资超 1100 亿元 国产大模型融资金额暴增",
       "title_en": null,
@@ -376,7 +228,7 @@
       "url": "https://www.theverge.com/tech/931532/bambu-agpl-pawel-jarczak-open-source-threat-dmca-github",
       "published_at": "2026-05-24T04:22:39Z",
       "first_seen_at": "2026-05-24T05:20:50.166035Z",
-      "last_seen_at": "2026-05-24T05:55:07.991475Z",
+      "last_seen_at": "2026-05-24T06:00:52.165515Z",
       "ai_filtered": true,
       "title_original": "'Fuck you, Bambu': How one private message could change the face of 3D printing",
       "title_en": "'Fuck you, Bambu': How one private message could change the face of 3D printing",
@@ -392,7 +244,7 @@
       "url": "https://uxdesign.cc/designing-how-designers-master-ai-642d8751d945?source=rss----138adf9c44c---4",
       "published_at": "2026-05-23T20:42:12Z",
       "first_seen_at": "2026-05-24T05:09:09.439340Z",
-      "last_seen_at": "2026-05-24T05:20:50.166035Z",
+      "last_seen_at": "2026-05-24T06:00:52.165515Z",
       "ai_filtered": true,
       "title_original": "Designing how designers master AI",
       "title_en": "Designing how designers master AI",
