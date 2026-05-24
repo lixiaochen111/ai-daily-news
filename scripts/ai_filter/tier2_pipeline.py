@@ -421,15 +421,72 @@ class Tier2Pipeline:
                 # Reject: low relevance and low quality
                 return None
 
-        except ValueError as e:
-            # EasyRouter not configured - cannot do deep analysis
-            if "EASYROUTER_API_KEY" in str(e):
-                print(f"⚠️  EasyRouter not configured, skipping Tier 2 deep analysis")
+        except (ValueError, Exception) as e:
+            print(f"⚠️  Tier 2 EasyRouter failed: {e}, falling back to GLM")
+            return self._glm_fallback_deep_analysis(item, source_config)
+
+    def _glm_fallback_deep_analysis(self, item: Dict[str, Any], source_config: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Fallback to GLM when EasyRouter is unavailable for deep analysis."""
+        try:
+            language = detect_language(
+                title=item.get("title", ""),
+                source=item.get("source", ""),
+                site_name=item.get("site_name", "")
+            )
+            user_prompt = build_analysis_prompt(
+                title=item.get("title", ""),
+                source=item.get("source", ""),
+                summary=item.get("summary"),
+                filter_focus=source_config.get("filter_focus"),
+                exclude_topics=source_config.get("exclude_topics"),
+                language=language
+            )
+            response = self.glm_client.call_model(
+                model="glm-4-flash",
+                system_prompt="You are a professional AI content analyst specializing in design and technology.",
+                user_prompt=user_prompt,
+                temperature=0.3,
+                max_tokens=500
+            )
+
+            import re
+            content = response["content"]
+            ai_analysis = None
+
+            try:
+                ai_analysis = json.loads(content)
+            except json.JSONDecodeError:
+                pass
+
+            if not ai_analysis:
+                first_brace = content.find('{')
+                last_brace = content.rfind('}')
+                if first_brace != -1 and last_brace != -1 and last_brace > first_brace:
+                    try:
+                        ai_analysis = json.loads(content[first_brace:last_brace+1])
+                    except json.JSONDecodeError:
+                        pass
+
+            if not ai_analysis:
                 return None
-            raise
-        except (json.JSONDecodeError, KeyError, Exception) as e:
-            # If analysis fails, reject to be safe
-            print(f"⚠️  Tier 2 AI analysis failed: {e}")
+
+            design_relevance = ai_analysis.get("design_relevance", 0) / 10.0
+            quality_score = ai_analysis.get("quality_score", 0)
+
+            if design_relevance >= self.design_relevance_threshold or quality_score >= self.quality_score_threshold:
+                return {
+                    "design_relevance": design_relevance,
+                    "quality_score": quality_score,
+                    "categories": ai_analysis.get("categories", []),
+                    "target_audience": ai_analysis.get("target_audience", ""),
+                    "key_insights": ai_analysis.get("key_insights", ""),
+                    "recommendation": ai_analysis.get("recommendation", ""),
+                    "fallback": "glm"
+                }
+
+            return None
+        except Exception as e2:
+            print(f"⚠️  Tier 2 GLM fallback also failed: {e2}")
             return None
 
     def process_batch(self, items: List[Dict[str, Any]], source_config: Dict[str, Any]) -> List[Optional[Dict[str, Any]]]:

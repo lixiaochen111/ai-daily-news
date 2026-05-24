@@ -13,6 +13,7 @@ import os
 from typing import Dict, Any, Optional
 
 from scripts.ai_filter.easyrouter_client import EasyRouterClient
+from scripts.ai_filter.glm_client import GLMClient
 from scripts.ai_filter.language_detector import detect_language
 from scripts.ai_filter.prompts import build_analysis_prompt
 
@@ -28,6 +29,7 @@ class Tier1Filter:
     def __init__(self):
         """Initialize Tier 1 filter with EasyRouter client and model configuration."""
         self.client = EasyRouterClient()
+        self.glm_client = GLMClient()
 
         # Model configuration from environment variables
         self.model_zh = os.getenv("AI_MODEL_ANALYZE_ZH", "deepseek-v4-pro")
@@ -145,15 +147,63 @@ class Tier1Filter:
                 # Reject: low relevance and low quality
                 return None
 
-        except ValueError as e:
-            # EasyRouter not configured - pass through item without deep analysis
-            # This allows the system to work with only GLM (free tier)
-            if "EASYROUTER_API_KEY" in str(e):
-                print(f"⚠️  EasyRouter not configured, skipping Tier 1 deep analysis")
-                # Return item without AI enrichment (will be filtered later by quality)
+        except (ValueError, Exception) as e:
+            print(f"⚠️  Tier 1 EasyRouter failed: {e}, falling back to GLM")
+            return self._glm_fallback_analysis(item, source_config, language)
+
+    def _glm_fallback_analysis(self, item: Dict[str, Any], source_config: Dict[str, Any], language: str) -> Optional[Dict[str, Any]]:
+        """Fallback to GLM when EasyRouter is unavailable."""
+        try:
+            user_prompt = build_analysis_prompt(
+                title=item.get("title", ""),
+                source=item.get("source", ""),
+                summary=item.get("summary"),
+                language=language
+            )
+            response = self.glm_client.call_model(
+                model="glm-4-flash",
+                system_prompt="You are a professional AI content analyst specializing in design and technology.",
+                user_prompt=user_prompt,
+                temperature=0.3,
+                max_tokens=500
+            )
+
+            import re
+            content = response["content"]
+            ai_analysis = None
+
+            try:
+                ai_analysis = json.loads(content)
+            except json.JSONDecodeError:
+                pass
+
+            if not ai_analysis:
+                first_brace = content.find('{')
+                last_brace = content.rfind('}')
+                if first_brace != -1 and last_brace != -1 and last_brace > first_brace:
+                    try:
+                        ai_analysis = json.loads(content[first_brace:last_brace+1])
+                    except json.JSONDecodeError:
+                        pass
+
+            if not ai_analysis:
                 return None
-            raise
-        except (json.JSONDecodeError, KeyError, Exception) as e:
-            # If AI analysis fails, reject the item to be safe
-            print(f"⚠️  Tier 1 AI analysis failed: {e}")
+
+            design_relevance = ai_analysis.get("design_relevance", 0) / 10.0
+            quality_score = ai_analysis.get("quality_score", 0)
+
+            if design_relevance >= self.design_relevance_threshold or quality_score >= self.quality_score_threshold:
+                enriched_item = item.copy()
+                enriched_item["_tier"] = 1
+                enriched_item["ai_tier"] = 1
+                enriched_item["_source_config"] = source_config
+                enriched_item["ai_design_relevance"] = design_relevance
+                enriched_item["ai_quality_score"] = quality_score
+                enriched_item["ai_categories"] = ai_analysis.get("categories", [])
+                enriched_item["ai_fallback"] = "glm"
+                return enriched_item
+
+            return None
+        except Exception as e2:
+            print(f"⚠️  Tier 1 GLM fallback also failed: {e2}")
             return None
