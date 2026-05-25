@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   update:
-    timeout-minutes: 15
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     environment:
       name: github-pages
