@@ -542,30 +542,47 @@ class Tier2Pipeline:
 
         print(f"🤖 GLM batch classification: {len(keyword_passed)} items → {len(glm_passed)} passed")
 
-        # Stage 3: EasyRouter deep analysis (still individual, needs detailed scoring)
+        # Stage 3: EasyRouter deep analysis (with fast GLM-trust fallback)
+        # First, test if EasyRouter is available with the first item
+        easyrouter_available = False
+        if glm_passed:
+            try:
+                test_result = self._ai_deep_analysis(glm_passed[0], source_config)
+                if test_result is not None:
+                    easyrouter_available = True
+            except Exception:
+                pass
+
         output = []
         for i, item in enumerate(items):
             if item not in glm_passed:
                 output.append(None)
                 continue
 
-            ai_analysis = self._ai_deep_analysis(item, source_config)
-            if ai_analysis is None:
-                output.append(None)
-                continue
-
-            # Enrich item
-            enriched_item = item.copy()
-            enriched_item["_tier"] = 2
-            enriched_item["ai_tier"] = 2
-            enriched_item["_source_config"] = source_config
-            enriched_item["ai_design_relevance"] = ai_analysis["design_relevance"]
-            enriched_item["ai_quality_score"] = ai_analysis["quality_score"]
-            enriched_item["ai_categories"] = ai_analysis["categories"]
-            enriched_item["ai_target_audience"] = ai_analysis["target_audience"]
-            enriched_item["ai_key_insights"] = ai_analysis["key_insights"]
-            enriched_item["ai_recommendation"] = ai_analysis.get("recommendation", "")
-            output.append(enriched_item)
+            if easyrouter_available:
+                ai_analysis = self._ai_deep_analysis(item, source_config)
+                if ai_analysis is None:
+                    output.append(None)
+                    continue
+                enriched_item = item.copy()
+                enriched_item["_tier"] = 2
+                enriched_item["ai_tier"] = 2
+                enriched_item["_source_config"] = source_config
+                enriched_item["ai_design_relevance"] = ai_analysis["design_relevance"]
+                enriched_item["ai_quality_score"] = ai_analysis["quality_score"]
+                enriched_item["ai_categories"] = ai_analysis["categories"]
+                enriched_item["ai_target_audience"] = ai_analysis.get("target_audience", "")
+                enriched_item["ai_key_insights"] = ai_analysis.get("key_insights", "")
+                enriched_item["ai_recommendation"] = ai_analysis.get("recommendation", "")
+                output.append(enriched_item)
+            else:
+                # EasyRouter unavailable: trust GLM batch classification directly
+                enriched_item = item.copy()
+                enriched_item["_tier"] = 2
+                enriched_item["ai_tier"] = 2
+                enriched_item["_source_config"] = source_config
+                enriched_item["ai_fallback"] = "glm_batch_trust"
+                output.append(enriched_item)
 
         print(f"✅ Tier 2 batch complete: {len(items)} items → {len([x for x in output if x])} accepted")
         return output
