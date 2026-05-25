@@ -32,11 +32,7 @@ class GLMClient:
     - Graceful degradation on quota exhaustion
     """
 
-    # Default shared API key (provided by project)
-    # All users share this free quota
-    DEFAULT_API_KEY = "a6a06824dfbf42b29e5af74334bbeb6f.BMbBvfB7obgYbgTG"
-
-    # Rate limiting: max requests per minute (shared quota protection)
+    # Rate limiting: max requests per minute
     MAX_REQUESTS_PER_MINUTE = 30
 
     def __init__(self, api_key=None):
@@ -45,17 +41,13 @@ class GLMClient:
 
         Args:
             api_key: Optional Zhipu AI API key.
-                     Priority: passed key > env var > default shared key
+                     Priority: passed key > env var GLM_API_KEY
         """
-        # Priority: explicit parameter > environment variable > default
-        self.api_key = (
-            api_key or
-            os.getenv("GLM_API_KEY") or
-            self.DEFAULT_API_KEY
-        )
+        self.api_key = api_key or os.getenv("GLM_API_KEY")
+        if not self.api_key:
+            raise ValueError("GLM_API_KEY environment variable is required")
 
-        # Track if using default shared key
-        self.using_shared_key = (self.api_key == self.DEFAULT_API_KEY)
+        self.using_shared_key = False
 
         # Initialize Zhipu AI client
         if ZhipuAI:
