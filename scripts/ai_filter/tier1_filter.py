@@ -114,8 +114,8 @@ class Tier1Filter:
                         pass
 
             if not ai_analysis:
-                print(f"⚠️  Tier 1 AI response unparseable: {content[:100]}...")
-                return None
+                print(f"⚠️  Tier 1 EasyRouter response unparseable, falling back to GLM")
+                return self._glm_fallback_analysis(item, source_config, language)
 
             # Extract scores
             design_relevance = ai_analysis.get("design_relevance", 0)  # 0-10 scale
