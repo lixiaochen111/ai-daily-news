@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-08-14T03:56:53.997955Z",
+  "generated_at": "2026-08-15T02:43:51.317854Z",
   "sites": [
     {
       "site_id": "followbuilders",
       "site_name": "Follow Builders",
       "ok": true,
       "item_count": 37,
-      "duration_ms": 276,
+      "duration_ms": 120,
       "error": null
     },
     {
@@ -14,15 +14,15 @@
       "site_name": "TechURLs",
       "ok": true,
       "item_count": 405,
-      "duration_ms": 430,
+      "duration_ms": 536,
       "error": null
     },
     {
       "site_id": "iris",
       "site_name": "Info Flow",
       "ok": true,
-      "item_count": 354,
-      "duration_ms": 12959,
+      "item_count": 335,
+      "duration_ms": 14977,
       "error": null
     },
     {
@@ -30,7 +30,7 @@
       "site_name": "TopHub",
       "ok": true,
       "item_count": 367,
-      "duration_ms": 1481,
+      "duration_ms": 1415,
       "error": null
     },
     {
@@ -38,7 +38,7 @@
       "site_name": "AI HubToday",
       "ok": false,
       "item_count": 0,
-      "duration_ms": 5032,
+      "duration_ms": 5111,
       "error": "HTTPSConnectionPool(host='ai.hubtoday.app', port=443): Max retries exceeded with url: / (Caused by NameResolutionError(\"HTTPSConnection(host='ai.hubtoday.app', port=443): Failed to resolve 'ai.hubtoday.app' ([Errno -2] Name or service not known)\"))"
     },
     {
@@ -46,7 +46,7 @@
       "site_name": "AIbase",
       "ok": true,
       "item_count": 20,
-      "duration_ms": 1087,
+      "duration_ms": 1349,
       "error": null
     },
     {
@@ -54,7 +54,7 @@
       "site_name": "AI HOT",
       "ok": true,
       "item_count": 50,
-      "duration_ms": 839,
+      "duration_ms": 678,
       "error": null
     },
     {
@@ -62,7 +62,7 @@
       "site_name": "NewsNow",
       "ok": true,
       "item_count": 127,
-      "duration_ms": 2692,
+      "duration_ms": 1153,
       "error": null
     },
     {
@@ -71,7 +71,7 @@
       "ok": true,
       "partial_failures": 2,
       "item_count": 210,
-      "duration_ms": 4169,
+      "duration_ms": 3467,
       "error": "2 feeds failed",
       "feed_count": 10,
       "effective_feed_count": 10,
@@ -86,9 +86,9 @@
     "aihubtoday"
   ],
   "zero_item_sites": [],
-  "fetched_raw_items": 1560,
-  "items_before_topic_filter": 870,
-  "items_in_24h": 200,
+  "fetched_raw_items": 1541,
+  "items_before_topic_filter": 888,
+  "items_in_24h": 188,
   "rss_opml": {
     "enabled": true,
     "path": "configured",
@@ -111,7 +111,7 @@
         "effective_feed_url": "https://www.anthropic.com/rss.xml",
         "ok": false,
         "item_count": 0,
-        "duration_ms": 252,
+        "duration_ms": 117,
         "error": "404 Client Error: Not Found for url: https://www.anthropic.com/rss.xml",
         "skipped": false,
         "skip_reason": null,
@@ -126,7 +126,7 @@
         "effective_feed_url": "https://tympanus.net/codrops/feed/",
         "ok": true,
         "item_count": 10,
-        "duration_ms": 1022,
+        "duration_ms": 769,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -141,7 +141,7 @@
         "effective_feed_url": "https://github.blog/ai-and-ml/feed/",
         "ok": true,
         "item_count": 10,
-        "duration_ms": 120,
+        "duration_ms": 111,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -156,7 +156,7 @@
         "effective_feed_url": "https://github.blog/changelog/feed/",
         "ok": true,
         "item_count": 10,
-        "duration_ms": 72,
+        "duration_ms": 113,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -171,7 +171,7 @@
         "effective_feed_url": "https://blog.google/technology/ai/rss/",
         "ok": true,
         "item_count": 20,
-        "duration_ms": 324,
+        "duration_ms": 305,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -186,7 +186,7 @@
         "effective_feed_url": "https://deepmind.google/blog/rss.xml",
         "ok": true,
         "item_count": 50,
-        "duration_ms": 532,
+        "duration_ms": 358,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -201,7 +201,7 @@
         "effective_feed_url": "https://huggingface.co/blog/feed.xml",
         "ok": true,
         "item_count": 50,
-        "duration_ms": 505,
+        "duration_ms": 317,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -216,7 +216,7 @@
         "effective_feed_url": "https://blogs.microsoft.com/ai/feed/",
         "ok": false,
         "item_count": 0,
-        "duration_ms": 303,
+        "duration_ms": 228,
         "error": "410 Client Error: Gone for url: https://blogs.microsoft.com/ai/feed/",
         "skipped": false,
         "skip_reason": null,
@@ -231,7 +231,7 @@
         "effective_feed_url": "https://openai.com/news/rss.xml",
         "ok": true,
         "item_count": 50,
-        "duration_ms": 479,
+        "duration_ms": 746,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -246,7 +246,7 @@
         "effective_feed_url": "https://uxdesign.cc/feed",
         "ok": true,
         "item_count": 10,
-        "duration_ms": 560,
+        "duration_ms": 403,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -275,6 +275,6 @@
     "effective_result_cap": 20,
     "estimated_max_cost_usd_per_run": 0.1,
     "run_utc_hour": 0,
-    "generated_date_utc": "2026-08-14"
+    "generated_date_utc": "2026-08-15"
   }
 }
