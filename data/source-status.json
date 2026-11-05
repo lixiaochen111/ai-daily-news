@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-11-04T08:19:42.129033Z",
+  "generated_at": "2026-11-05T08:45:21.399339Z",
   "sites": [
     {
       "site_id": "followbuilders",
       "site_name": "Follow Builders",
       "ok": true,
-      "item_count": 30,
-      "duration_ms": 266,
+      "item_count": 31,
+      "duration_ms": 274,
       "error": null
     },
     {
@@ -14,23 +14,23 @@
       "site_name": "TechURLs",
       "ok": true,
       "item_count": 405,
-      "duration_ms": 454,
+      "duration_ms": 419,
       "error": null
     },
     {
       "site_id": "iris",
       "site_name": "Info Flow",
       "ok": true,
-      "item_count": 371,
-      "duration_ms": 38910,
+      "item_count": 372,
+      "duration_ms": 47048,
       "error": null
     },
     {
       "site_id": "tophub",
       "site_name": "TopHub",
       "ok": true,
-      "item_count": 363,
-      "duration_ms": 1487,
+      "item_count": 365,
+      "duration_ms": 1704,
       "error": null
     },
     {
@@ -38,7 +38,7 @@
       "site_name": "AI HubToday",
       "ok": false,
       "item_count": 0,
-      "duration_ms": 5337,
+      "duration_ms": 5702,
       "error": "HTTPSConnectionPool(host='ai.hubtoday.app', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1016)')))"
     },
     {
@@ -46,7 +46,7 @@
       "site_name": "AIbase",
       "ok": true,
       "item_count": 20,
-      "duration_ms": 1924,
+      "duration_ms": 1536,
       "error": null
     },
     {
@@ -54,29 +54,29 @@
       "site_name": "AI HOT",
       "ok": true,
       "item_count": 50,
-      "duration_ms": 5944,
+      "duration_ms": 2331,
       "error": null
     },
     {
       "site_id": "newsnow",
       "site_name": "NewsNow",
       "ok": true,
-      "item_count": 123,
-      "duration_ms": 1371,
+      "item_count": 126,
+      "duration_ms": 1787,
       "error": null
     },
     {
       "site_id": "opmlrss",
       "site_name": "OPML RSS",
       "ok": true,
-      "partial_failures": 3,
-      "item_count": 200,
-      "duration_ms": 3211,
-      "error": "3 feeds failed",
+      "partial_failures": 4,
+      "item_count": 190,
+      "duration_ms": 13878,
+      "error": "4 feeds failed",
       "feed_count": 10,
       "effective_feed_count": 10,
-      "ok_feed_count": 7,
-      "failed_feed_count": 3,
+      "ok_feed_count": 6,
+      "failed_feed_count": 4,
       "skipped_feed_count": 0,
       "replaced_feed_count": 0
     }
@@ -86,19 +86,20 @@
     "aihubtoday"
   ],
   "zero_item_sites": [],
-  "fetched_raw_items": 1523,
-  "items_before_topic_filter": 928,
-  "items_in_24h": 209,
+  "fetched_raw_items": 1511,
+  "items_before_topic_filter": 729,
+  "items_in_24h": 154,
   "rss_opml": {
     "enabled": true,
     "path": "configured",
     "feed_total": 10,
     "effective_feed_total": 10,
-    "ok_feeds": 7,
+    "ok_feeds": 6,
     "failed_feeds": [
       "https://www.anthropic.com/rss.xml",
       "https://tympanus.net/codrops/feed/",
-      "https://blogs.microsoft.com/ai/feed/"
+      "https://blogs.microsoft.com/ai/feed/",
+      "https://uxdesign.cc/feed"
     ],
     "zero_item_feeds": [],
     "skipped_feeds": [],
@@ -112,7 +113,7 @@
         "effective_feed_url": "https://www.anthropic.com/rss.xml",
         "ok": false,
         "item_count": 0,
-        "duration_ms": 252,
+        "duration_ms": 331,
         "error": "404 Client Error: Not Found for url: https://www.anthropic.com/rss.xml",
         "skipped": false,
         "skip_reason": null,
@@ -127,7 +128,7 @@
         "effective_feed_url": "https://tympanus.net/codrops/feed/",
         "ok": false,
         "item_count": 0,
-        "duration_ms": 92,
+        "duration_ms": 113,
         "error": "403 Client Error: Forbidden for url: https://tympanus.net/codrops/feed/",
         "skipped": false,
         "skip_reason": null,
@@ -142,7 +143,7 @@
         "effective_feed_url": "https://github.blog/ai-and-ml/feed/",
         "ok": true,
         "item_count": 10,
-        "duration_ms": 427,
+        "duration_ms": 967,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -157,7 +158,7 @@
         "effective_feed_url": "https://github.blog/changelog/feed/",
         "ok": true,
         "item_count": 10,
-        "duration_ms": 52,
+        "duration_ms": 113,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -172,7 +173,7 @@
         "effective_feed_url": "https://blog.google/technology/ai/rss/",
         "ok": true,
         "item_count": 20,
-        "duration_ms": 282,
+        "duration_ms": 499,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -187,7 +188,7 @@
         "effective_feed_url": "https://deepmind.google/blog/rss.xml",
         "ok": true,
         "item_count": 50,
-        "duration_ms": 262,
+        "duration_ms": 361,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -202,7 +203,7 @@
         "effective_feed_url": "https://huggingface.co/blog/feed.xml",
         "ok": true,
         "item_count": 50,
-        "duration_ms": 226,
+        "duration_ms": 317,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -217,7 +218,7 @@
         "effective_feed_url": "https://blogs.microsoft.com/ai/feed/",
         "ok": false,
         "item_count": 0,
-        "duration_ms": 348,
+        "duration_ms": 217,
         "error": "410 Client Error: Gone for url: https://blogs.microsoft.com/ai/feed/",
         "skipped": false,
         "skip_reason": null,
@@ -232,7 +233,7 @@
         "effective_feed_url": "https://openai.com/news/rss.xml",
         "ok": true,
         "item_count": 50,
-        "duration_ms": 808,
+        "duration_ms": 802,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -245,10 +246,10 @@
         "feed_title": "UX Collective - Medium",
         "feed_url": "https://uxdesign.cc/feed",
         "effective_feed_url": "https://uxdesign.cc/feed",
-        "ok": true,
-        "item_count": 10,
-        "duration_ms": 462,
-        "error": null,
+        "ok": false,
+        "item_count": 0,
+        "duration_ms": 10158,
+        "error": "504 Server Error: Gateway Timeout for url: https://uxdesign.cc/feed",
         "skipped": false,
         "skip_reason": null,
         "replaced": false,
@@ -276,6 +277,6 @@
     "effective_result_cap": 20,
     "estimated_max_cost_usd_per_run": 0.1,
     "run_utc_hour": 0,
-    "generated_date_utc": "2026-11-04"
+    "generated_date_utc": "2026-11-05"
   }
 }
